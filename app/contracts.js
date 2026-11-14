@@ -474,10 +474,25 @@ async function contractDetail(id) {
 /* ── Documents ── */
 const _docsCache = {};
 
+const DOC_TYPES = [
+  'Bill of Lading',
+  'Commercial Invoice',
+  'Packing List',
+  'Phytosanitary Certificate',
+  'Fumigation Certificate',
+  'Certificate of Origin',
+  'Quality Inspection Report',
+  'Insurance Certificate',
+  'Freight Invoice',
+  'Other',
+];
+
 async function loadDocsForContract(contractId) {
   try {
-    const { data } = await sb.storage.from('contract-documents')
-      .list(`${contractId}/`, { limit: 100 });
+    const { data } = await sb.from('contract_documents')
+      .select('*')
+      .eq('contract_id', contractId)
+      .order('created_at');
     _docsCache[contractId] = data || [];
   } catch(e) {
     _docsCache[contractId] = [];
@@ -488,36 +503,39 @@ async function renderDocsList(contractId) {
   const el = document.getElementById('docs-list-' + contractId);
   if (!el) return;
 
-  const files = _docsCache[contractId] || [];
+  const docs = _docsCache[contractId] || [];
 
-  if (!files.length) {
+  if (!docs.length) {
     el.innerHTML = '<p class="text-muted text-center" style="padding:16px">No documents uploaded yet</p>';
     return;
   }
 
-  // Get signed URLs
-  const signedUrls = await Promise.all(files.map(f =>
-    sb.storage.from('contract-documents')
-      .createSignedUrl(`${contractId}/${f.name}`, 3600)
-      .then(r => ({ name: f.name, url: r.data?.signedUrl }))
-  ));
+  // Get signed URLs for all docs
+  const withUrls = await Promise.all(docs.map(async d => {
+    const { data } = await sb.storage.from('contract-docs')
+      .createSignedUrl(d.file_path, 3600);
+    return { ...d, signedUrl: data?.signedUrl };
+  }));
 
   el.innerHTML = `
     <div style="display:grid;gap:8px">
-      ${signedUrls.map(f => {
-        const ext = f.name.split('.').pop().toLowerCase();
-        const icon = ['pdf'].includes(ext) ? '📄' : ['jpg','jpeg','png','gif','webp'].includes(ext) ? '🖼' : ['xlsx','xls','csv'].includes(ext) ? '📊' : ['docx','doc'].includes(ext) ? '📝' : '📎';
+      ${withUrls.map(d => {
+        const ext = d.file_name.split('.').pop().toLowerCase();
+        const icon = ext === 'pdf' ? '📄' : ['jpg','jpeg','png','webp'].includes(ext) ? '🖼' : '📎';
+        const label = d.doc_type === 'Other' && d.custom_name ? d.custom_name : d.doc_type;
+        const size = d.file_size ? (d.file_size > 1048576 ? (d.file_size/1048576).toFixed(1)+' MB' : (d.file_size/1024).toFixed(0)+' KB') : '';
         return `
           <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
             <div style="display:flex;align-items:center;gap:10px">
-              <span style="font-size:18px">${icon}</span>
+              <span style="font-size:20px">${icon}</span>
               <div>
-                <div style="font-size:13px;font-weight:600">${f.name}</div>
+                <div style="font-size:13px;font-weight:600;color:var(--text)">${label}</div>
+                <div style="font-size:11px;color:var(--text3)">${d.file_name}${size ? ' · ' + size : ''}</div>
               </div>
             </div>
             <div style="display:flex;gap:8px">
-              <a href="${f.url}" target="_blank" class="btn btn-sm">View</a>
-              ${canWrite('contracts') ? `<button class="btn btn-sm btn-danger" onclick="deleteDocument('${contractId}','${f.name}')">🗑</button>` : ''}
+              ${d.signedUrl ? `<a href="${d.signedUrl}" target="_blank" class="btn btn-sm">View</a>` : ''}
+              ${canWrite('contracts') ? `<button class="btn btn-sm" style="color:var(--red)" onclick="deleteDocument('${contractId}','${d.id}','${d.file_path}')">🗑</button>` : ''}
             </div>
           </div>`;
       }).join('')}
@@ -528,22 +546,36 @@ function uploadDocumentsModal(contractId) {
   openModal(`
   <div class="modal modal-sm" onclick="event.stopPropagation()">
     <div class="modal-header">
-      <div class="modal-title">📎 Upload Documents</div>
+      <div class="modal-title">📎 Upload Document</div>
       <button class="close-btn" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="upload-area" id="upload-area-${contractId}"
-        ondragover="event.preventDefault();this.classList.add('drag-over')"
-        ondragleave="this.classList.remove('drag-over')"
-        ondrop="handleDocDrop(event,'${contractId}')"
-        onclick="document.getElementById('doc-file-input-${contractId}').click()">
-        <div style="font-size:28px;margin-bottom:8px">📄</div>
-        <div style="font-size:14px;font-weight:600;margin-bottom:4px">Click or drag files here</div>
-        <div class="text-muted text-sm">PDF, DOCX, XLSX, images — up to 10MB each</div>
-        <input type="file" id="doc-file-input-${contractId}" multiple style="display:none"
-          onchange="handleDocSelect(this,'${contractId}')">
+      <div class="form-group">
+        <label>Document Type</label>
+        <select id="doc-type-select" onchange="toggleDocCustomName()">
+          ${DOC_TYPES.map(t => `<option value="${t}">${t}</option>`).join('')}
+        </select>
       </div>
-      <div id="upload-preview-${contractId}" style="margin-top:12px"></div>
+      <div class="form-group" id="doc-custom-name-wrap" style="display:none">
+        <label>Document Name</label>
+        <input type="text" id="doc-custom-name" placeholder="e.g. Weight Certificate">
+      </div>
+      <div class="form-group">
+        <label>File <span class="text-muted" style="font-weight:400">(PDF or image, max 10MB)</span></label>
+        <div class="upload-area" id="upload-area-${contractId}"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleDocDrop(event,'${contractId}')"
+          onclick="document.getElementById('doc-file-input-${contractId}').click()"
+          style="cursor:pointer;border:2px dashed var(--border);border-radius:8px;padding:24px;text-align:center">
+          <div style="font-size:28px;margin-bottom:8px">📄</div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">Click or drag file here</div>
+          <div class="text-muted" style="font-size:12px">PDF, JPG, PNG — up to 10MB</div>
+          <input type="file" id="doc-file-input-${contractId}" accept=".pdf,.jpg,.jpeg,.png,.webp" style="display:none"
+            onchange="handleDocSelect(this,'${contractId}')">
+        </div>
+        <div id="upload-preview-${contractId}" style="margin-top:8px"></div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal()">Cancel</button>
@@ -552,44 +584,114 @@ function uploadDocumentsModal(contractId) {
   </div>`);
 }
 
+function toggleDocCustomName() {
+  const sel = document.getElementById('doc-type-select');
+  const wrap = document.getElementById('doc-custom-name-wrap');
+  if (wrap) wrap.style.display = sel?.value === 'Other' ? 'block' : 'none';
+}
+
 window._pendingDocFiles = {};
 
 function handleDocSelect(input, contractId) {
-  window._pendingDocFiles[contractId] = Array.from(input.files);
+  window._pendingDocFiles[contractId] = input.files[0] || null;
   showDocPreview(contractId);
 }
 
 function handleDocDrop(event, contractId) {
   event.preventDefault();
   document.getElementById('upload-area-' + contractId)?.classList.remove('drag-over');
-  window._pendingDocFiles[contractId] = Array.from(event.dataTransfer.files);
+  window._pendingDocFiles[contractId] = event.dataTransfer.files[0] || null;
   showDocPreview(contractId);
 }
 
 function showDocPreview(contractId) {
-  const files = window._pendingDocFiles[contractId] || [];
+  const file   = window._pendingDocFiles[contractId];
   const preview = document.getElementById('upload-preview-' + contractId);
   const btn     = document.getElementById('upload-confirm-btn-' + contractId);
   if (preview) {
-    preview.innerHTML = files.map(f => `
-      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px">
-        <span>📎</span><span>${f.name}</span>
-        <span class="text-muted">(${(f.size/1024).toFixed(0)} KB)</span>
-      </div>`).join('');
+    preview.innerHTML = file
+      ? `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--teal-light);border-radius:6px;font-size:13px">
+           <span>📎</span><span style="font-weight:600">${file.name}</span>
+           <span style="color:var(--text3)">(${(file.size/1024).toFixed(0)} KB)</span>
+         </div>`
+      : '';
   }
-  if (btn) btn.disabled = files.length === 0;
+  if (btn) btn.disabled = !file;
 }
 
 async function confirmUpload(contractId) {
-  const files = window._pendingDocFiles[contractId] || [];
-  if (!files.length) return;
+  const file = window._pendingDocFiles[contractId];
+  if (!file) return;
+
   const btn = document.getElementById('upload-confirm-btn-' + contractId);
   if (btn) { btn.textContent = 'Uploading…'; btn.disabled = true; }
 
-  for (const file of files) {
-    const path = `${contractId}/${file.name}`;
-    await sb.storage.from('contract-documents').upload(path, file, { upsert: true });
+  const docType    = document.getElementById('doc-type-select')?.value || 'Other';
+  const customName = document.getElementById('doc-custom-name')?.value.trim() || null;
+
+  // Validate Other has a name
+  if (docType === 'Other' && !customName) {
+    alert('Please enter a name for this document.');
+    if (btn) { btn.textContent = 'Upload'; btn.disabled = false; }
+    return;
   }
+
+  // Validate file size (10MB)
+  if (file.size > 10 * 1024 * 1024) {
+    alert('File is too large. Maximum size is 10MB.');
+    if (btn) { btn.textContent = 'Upload'; btn.disabled = false; }
+    return;
+  }
+
+  // Build storage path: {company_id}/{contract_id}/{uuid}.{ext}
+  const ext  = file.name.split('.').pop().toLowerCase();
+  const uid  = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36);
+  const path = `${S.companyId}/${contractId}/${uid}.${ext}`;
+
+  const { error: storageErr } = await sb.storage.from('contract-docs')
+    .upload(path, file, { contentType: file.type });
+
+  if (storageErr) {
+    alert('Upload failed: ' + storageErr.message);
+    if (btn) { btn.textContent = 'Upload'; btn.disabled = false; }
+    return;
+  }
+
+  // Save record in contract_documents
+  const { error: dbErr } = await sb.from('contract_documents').insert({
+    contract_id:  contractId,
+    company_id:   S.companyId,
+    uploaded_by:  S.user.id,
+    doc_type:     docType,
+    custom_name:  docType === 'Other' ? customName : null,
+    file_name:    file.name,
+    file_path:    path,
+    file_size:    file.size,
+    mime_type:    file.type,
+  });
+
+  if (dbErr) {
+    // Rollback storage upload
+    await sb.storage.from('contract-docs').remove([path]);
+    alert('Error saving document record: ' + dbErr.message);
+    if (btn) { btn.textContent = 'Upload'; btn.disabled = false; }
+    return;
+  }
+
+  // Auto-tick the matching checklist item
+  const checkKey = `doc_check_${contractId}_${(docType === 'Other' ? customName : docType).replace(/\s+/g,'_')}`;
+  try { localStorage.setItem(checkKey, '1'); } catch(e) {}
+  // Update checklist UI if visible
+  const checkboxes = document.querySelectorAll(`#doc-checklist-${contractId} input[type=checkbox]`);
+  checkboxes.forEach(cb => {
+    const lbl = cb.nextElementSibling?.textContent?.trim();
+    const match = docType === 'Other' ? lbl === customName : lbl === docType;
+    if (match) {
+      cb.checked = true;
+      cb.closest('label')?.style && (cb.closest('label').style.background = 'var(--teal-light)');
+      if (cb.nextElementSibling) cb.nextElementSibling.style.color = 'var(--teal-dark)';
+    }
+  });
 
   delete window._pendingDocFiles[contractId];
   await loadDocsForContract(contractId);
@@ -597,9 +699,10 @@ async function confirmUpload(contractId) {
   renderDocsList(contractId);
 }
 
-async function deleteDocument(contractId, fileName) {
-  if (!confirm(`Delete "${fileName}"?`)) return;
-  await sb.storage.from('contract-documents').remove([`${contractId}/${fileName}`]);
+async function deleteDocument(contractId, docId, filePath) {
+  if (!confirm('Delete this document?')) return;
+  await sb.storage.from('contract-docs').remove([filePath]);
+  await sb.from('contract_documents').delete().eq('id', docId);
   await loadDocsForContract(contractId);
   renderDocsList(contractId);
 }
