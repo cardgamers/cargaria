@@ -157,12 +157,12 @@ async function contractDetail(id) {
         <div class="kpi navy">
           <div class="kpi-label">Purchase Value</div>
           <div class="kpi-value">${fmt.usd(c.purchase_value)}</div>
-          <div class="kpi-sub">${c.purchase_payment_terms || '—'}</div>
+          <div class="kpi-sub">Terms: ${c.purchase_payment_terms || '—'}</div>
         </div>
         <div class="kpi teal">
           <div class="kpi-label">Sales Value</div>
           <div class="kpi-value">${c.sales_value ? fmt.usd(c.sales_value) : '<span style="color:var(--text3)">No buyer</span>'}</div>
-          <div class="kpi-sub">${c.sales_payment_terms || '—'}</div>
+          <div class="kpi-sub">Terms: ${c.sales_payment_terms || '—'}</div>
         </div>
         <div class="kpi ${netMargin >= 0 ? 'green' : 'red'}">
           <div class="kpi-label">Net Margin</div>
@@ -170,9 +170,9 @@ async function contractDetail(id) {
           <div class="kpi-sub">${netMarginPct.toFixed(1)}%</div>
         </div>
         <div class="kpi amber">
-          <div class="kpi-label">Capital Employed</div>
-          <div class="kpi-value">${fmt.usd(c.capital_employed || advancePaid)}</div>
-          <div class="kpi-sub">Advance paid so far</div>
+          <div class="kpi-label">Capital at Risk</div>
+          <div class="kpi-value">${fmt.usd(advancePaid > advanceReceived ? advancePaid - advanceReceived : 0)}</div>
+          <div class="kpi-sub">Out − received back</div>
         </div>
       </div>
 
@@ -243,21 +243,6 @@ async function contractDetail(id) {
         </div>
       </div>
 
-      <!-- Detention Alert -->
-      ${detentionDays > 0 ? `
-      <div class="alert alert-danger mb-16">
-        <span style="font-size:18px">🚨</span>
-        <div>
-          <strong>Detention active: ${detentionDays} day${detentionDays > 1 ? 's' : ''}</strong>
-          — Estimated cost: <strong>${fmt.usd(detentionCost)}</strong>
-          (${c.container_count} ctrs × $${c.daily_detention_rate}/day)
-          <br><span style="font-size:12px">Last free day passed. Containers not yet returned.</span>
-          <div style="margin-top:8px">
-            <button class="btn btn-sm" onclick="confirmContainerReturn('${id}','${c.contract_number}')">✓ Mark Containers Returned</button>
-          </div>
-        </div>
-      </div>` : ''}
-      ${c.containers_returned_date ? `<div class="alert alert-success mb-16">✓ Empty containers returned on ${fmt.date(c.containers_returned_date)}</div>` : ''}
 
       <!-- Shipment Lines -->
       <div class="section-divider">Shipment Lines
@@ -405,23 +390,50 @@ async function contractDetail(id) {
       </div>
 
       <!-- Detention Calculator -->
-      ${(c.free_days || c.daily_detention_rate) ? `
-      <div class="section-divider">Detention Calculator</div>
-      <div class="card" style="padding:16px;margin-bottom:20px">
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:12px">
-          ${[
-            ['Arrival Date', fmt.date(c.arrival_date)],
-            ['Free Days', c.free_days ? c.free_days + ' days' : '—'],
-            ['Daily Rate', c.daily_detention_rate ? fmt.usd(c.daily_detention_rate) + '/ctr' : '—'],
-            ['Containers', c.container_count || '—'],
-          ].map(([l,v]) => `<div><div class="kpi-label">${l}</div><div style="font-size:15px;font-weight:600">${v}</div></div>`).join('')}
-        </div>
-        ${detentionDays > 0 ? `
-        <div class="alert alert-danger">
-          <strong>${detentionDays} detention day${detentionDays > 1 ? 's' : ''} — Estimated cost: ${fmt.usd(detentionCost)}</strong>
-        </div>` : c.arrival_date && c.free_days ? `
-        <div class="alert alert-success">✓ Within free days period</div>` : ''}
-      </div>` : ''}
+      ${(c.arrival_date || c.free_days || c.daily_detention_rate) ? (() => {
+        const arrDate  = c.arrival_date ? new Date(c.arrival_date) : null;
+        const sailDate = c.sailing_date ? new Date(c.sailing_date) : null;
+        let freeDaysEnd = null;
+        if (arrDate && c.free_days) {
+          freeDaysEnd = new Date(arrDate);
+          freeDaysEnd.setDate(freeDaysEnd.getDate() + parseInt(c.free_days));
+        }
+        const today = new Date(); today.setHours(0,0,0,0);
+        const retDate = c.containers_returned_date ? new Date(c.containers_returned_date) : null;
+
+        // Status logic
+        let statusHtml = '';
+        if (retDate) {
+          const retWithinFree = freeDaysEnd && retDate <= freeDaysEnd;
+          statusHtml = retWithinFree
+            ? `<div class="alert alert-success">✓ Empty containers returned ${fmt.date(c.containers_returned_date)} — within free days period</div>`
+            : `<div class="alert alert-danger">⚠️ Empty containers returned ${fmt.date(c.containers_returned_date)} — ${Math.round((retDate - freeDaysEnd) / 86400000)} days after free period</div>`;
+        } else if (detentionDays > 0) {
+          statusHtml = `<div class="alert alert-danger">
+            <strong>🚨 ${detentionDays} detention day${detentionDays > 1 ? 's' : ''} running — Est. cost: ${fmt.usd(detentionCost)}</strong>
+            <div style="margin-top:8px"><button class="btn btn-sm" onclick="confirmContainerReturn('${id}','${c.contract_number}')">✓ Mark Containers Returned</button></div>
+          </div>`;
+        } else if (freeDaysEnd && !retDate) {
+          const daysLeft = Math.round((freeDaysEnd - today) / 86400000);
+          statusHtml = daysLeft >= 0
+            ? `<div class="alert alert-success">✓ Within free days period — ${daysLeft} day${daysLeft !== 1 ? 's' : ''} remaining</div>`
+            : `<div class="alert alert-danger">🚨 Free days expired ${Math.abs(daysLeft)} day${Math.abs(daysLeft) !== 1 ? 's' : ''} ago — containers not yet returned</div>`;
+        }
+
+        return `
+        <div class="section-divider">Detention Calculator</div>
+        <div class="card" style="padding:16px;margin-bottom:20px">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px">
+            <div><div class="kpi-label">Shipped Date</div><div style="font-size:15px;font-weight:600">${sailDate ? fmt.date(c.sailing_date) : '—'}</div></div>
+            <div><div class="kpi-label">Arrival Date</div><div style="font-size:15px;font-weight:600">${arrDate ? fmt.date(c.arrival_date) : '—'}</div></div>
+            <div><div class="kpi-label">Free Days</div><div style="font-size:15px;font-weight:600">${c.free_days ? c.free_days + ' days' : '—'}</div></div>
+            <div><div class="kpi-label">Free Days End</div><div style="font-size:15px;font-weight:600;color:var(--amber)">${freeDaysEnd ? fmt.date(freeDaysEnd.toISOString()) : '—'}</div></div>
+            <div><div class="kpi-label">Empty Return</div><div style="font-size:15px;font-weight:600;color:${retDate ? 'var(--green)' : 'var(--text3)'}">${retDate ? fmt.date(c.containers_returned_date) : 'Not yet returned'}</div></div>
+            <div><div class="kpi-label">Daily Rate / Ctr</div><div style="font-size:15px;font-weight:600">${c.daily_detention_rate ? fmt.usd(c.daily_detention_rate) : '—'}</div></div>
+          </div>
+          ${statusHtml}
+        </div>`;
+      })() : ''}
 
       <!-- Buyer Invoice Preview -->
       ${c.sales_value && cf.sales_invoice_number ? `
