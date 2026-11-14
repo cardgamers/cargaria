@@ -9,7 +9,15 @@
   <meta name="apple-mobile-web-app-title" content="Cargaria">
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
-  <title>Cargaria — Timber Trade Manager</title>
+  <title>Cargaria — Commodity Trade Management</title>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3B9QWWLGWC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-3B9QWWLGWC');
+  </script>
   <link rel="stylesheet" href="/app/style.css">
 </head>
 <body>
@@ -89,7 +97,7 @@
       <h3 class="ob-step-title">What's your company name?</h3>
       <div class="form-group">
         <label>Company Name</label>
-        <input type="text" id="ob-company" placeholder="Timber Trading Co." onkeydown="if(event.key==='Enter')obNext()">
+        <input type="text" id="ob-company" placeholder="Commodity Trading Co." onkeydown="if(event.key==='Enter')obNext()">
       </div>
     </div>
 
@@ -100,17 +108,17 @@
         <div class="btype-card selected" id="btype-trader" onclick="selectBtype('trader')">
           <div class="btype-icon">🤝</div>
           <div class="btype-label">Trader</div>
-          <div class="btype-desc">Buy and sell timber internationally</div>
+          <div class="btype-desc">Buy and sell commodities internationally</div>
         </div>
         <div class="btype-card" id="btype-importer" onclick="selectBtype('importer')">
           <div class="btype-icon">📦</div>
           <div class="btype-label">Importer</div>
-          <div class="btype-desc">Source timber from overseas suppliers</div>
+          <div class="btype-desc">Source commodities from overseas suppliers</div>
         </div>
         <div class="btype-card" id="btype-exporter" onclick="selectBtype('exporter')">
           <div class="btype-icon">🚢</div>
           <div class="btype-label">Exporter</div>
-          <div class="btype-desc">Supply timber to international buyers</div>
+          <div class="btype-desc">Supply commodities to international buyers</div>
         </div>
         <div class="btype-card" id="btype-agent" onclick="selectBtype('agent')">
           <div class="btype-icon">📋</div>
