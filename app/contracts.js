@@ -271,13 +271,13 @@ async function contractDetail(id) {
                 <tr>
                   <td><strong>${l.container_number || '—'}</strong></td>
                   <td>${l.timber_category || l.log_category || '—'}</td>
-                  <td>${l.pieces_count ? fmt.num(l.pieces_count, 0) : '—'}</td>
-                  <td>${l.girth ? l.girth + '"' : '—'}</td>
-                  <td class="amt">${l.cbm_volume ? fmt.num(l.cbm_volume) : '—'}</td>
-                  <td class="amt">${l.purchase_price_per_unit ? '$' + fmt.num(l.purchase_price_per_unit) : '—'}</td>
-                  <td class="amt">${l.sales_price_per_unit ? '$' + fmt.num(l.sales_price_per_unit) : '—'}</td>
-                  <td class="amt">${l.purchase_line_value ? fmt.usd(l.purchase_line_value) : '—'}</td>
-                  <td class="amt">${l.sales_line_value ? fmt.usd(l.sales_line_value) : '—'}</td>
+                  <td>${l.no_of_pieces ? fmt.num(l.no_of_pieces, 0) : '—'}</td>
+                  <td>${l.avg_girth_cft ? fmt.num(l.avg_girth_cft) + ' cft' : '—'}</td>
+                  <td class="amt">${l.purchase_volume_cbm ? fmt.num(l.purchase_volume_cbm) + ' CBM' : '—'}</td>
+                  <td class="amt">${l.purchase_price_per_cbm ? '$' + fmt.num(l.purchase_price_per_cbm) : '—'}</td>
+                  <td class="amt">${l.sales_price_per_cbm ? '$' + fmt.num(l.sales_price_per_cbm) : '—'}</td>
+                  <td class="amt">${l.purchase_value_override ? fmt.usd(l.purchase_value_override) : (l.purchase_volume_cbm && l.purchase_price_per_cbm ? fmt.usd(l.purchase_volume_cbm * l.purchase_price_per_cbm) : '—')}</td>
+                  <td class="amt">${l.sales_value_override ? fmt.usd(l.sales_value_override) : (l.selling_volume_cbm && l.sales_price_per_cbm ? fmt.usd(l.selling_volume_cbm * l.sales_price_per_cbm) : '—')}</td>
                   ${canEdit ? `<td><button class="btn btn-sm" onclick="editShipmentLineModal('${l.id}','${id}')">✏️</button></td>` : ''}
                 </tr>`).join('')}
           </tbody>
@@ -642,14 +642,14 @@ async function editShipmentLineModal(lineId, contractId) {
             ).join('')}
           </select>
         </div>
-        <div class="form-group"><label>Pieces Count</label><input type="number" id="sl-pieces" value="${line.pieces_count || ''}"></div>
-        <div class="form-group"><label>Girth (inches)</label><input type="number" id="sl-girth" value="${line.girth || ''}"></div>
-        <div class="form-group"><label>CBM Volume</label><input type="number" id="sl-cbm" value="${line.cbm_volume || ''}" step="0.01"></div>
-        <div class="form-group"><label>MT Volume</label><input type="number" id="sl-mt" value="${line.mt_volume || ''}" step="0.01"></div>
-        <div class="form-group"><label>Purchase Price / Unit</label><input type="number" id="sl-ppu" value="${line.purchase_price_per_unit || ''}" step="0.01"></div>
-        <div class="form-group"><label>Sales Price / Unit</label><input type="number" id="sl-spu" value="${line.sales_price_per_unit || ''}" step="0.01"></div>
-        <div class="form-group"><label>Purchase Value (override)</label><input type="number" id="sl-pv" value="${line.purchase_line_value || ''}" step="0.01" placeholder="Leave blank to auto-calc"></div>
-        <div class="form-group"><label>Sales Value (override)</label><input type="number" id="sl-sv" value="${line.sales_line_value || ''}" step="0.01" placeholder="Leave blank to auto-calc"></div>
+        <div class="form-group"><label>No. of Pieces</label><input type="number" id="sl-pieces" value="${line.no_of_pieces || ''}"></div>
+        <div class="form-group"><label>Avg Girth (cft)</label><input type="number" id="sl-girth" value="${line.avg_girth_cft || ''}" step="0.01"></div>
+        <div class="form-group"><label>Purchase Volume (CBM)</label><input type="number" id="sl-cbm" value="${line.purchase_volume_cbm || ''}" step="0.001"></div>
+        <div class="form-group"><label>Selling Volume (CBM)</label><input type="number" id="sl-mt" value="${line.selling_volume_cbm || ''}" step="0.001"></div>
+        <div class="form-group"><label>Purchase Price / CBM ($)</label><input type="number" id="sl-ppu" value="${line.purchase_price_per_cbm || ''}" step="0.01"></div>
+        <div class="form-group"><label>Sales Price / CBM ($)</label><input type="number" id="sl-spu" value="${line.sales_price_per_cbm || ''}" step="0.01"></div>
+        <div class="form-group"><label>Purchase Value (override)</label><input type="number" id="sl-pv" value="${line.purchase_value_override || ''}" step="0.01" placeholder="Leave blank to auto-calc"></div>
+        <div class="form-group"><label>Sales Value (override)</label><input type="number" id="sl-sv" value="${line.sales_value_override || ''}" step="0.01" placeholder="Leave blank to auto-calc"></div>
         <div class="form-group full"><label>Notes</label><textarea id="sl-notes" rows="2">${line.notes || ''}</textarea></div>
       </div>
     </div>
@@ -667,19 +667,20 @@ async function saveEditShipmentLine(lineId, contractId) {
   const pvOverride = parseFloat(document.getElementById('sl-pv').value) || null;
   const svOverride = parseFloat(document.getElementById('sl-sv').value) || null;
 
+  const sellCbm = parseFloat(document.getElementById('sl-mt').value) || null;
   const { error } = await sb.from('shipment_lines').update({
-    container_number:     document.getElementById('sl-cnum').value.trim() || null,
-    timber_category:      document.getElementById('sl-category').value,
-    pieces_count:         parseInt(document.getElementById('sl-pieces').value) || null,
-    girth:                parseInt(document.getElementById('sl-girth').value) || null,
-    cbm_volume:           cbm,
-    mt_volume:            parseFloat(document.getElementById('sl-mt').value) || null,
-    purchase_price_per_unit: ppu,
-    sales_price_per_unit: spu,
-    purchase_line_value:  pvOverride || (ppu && cbm ? Math.round(ppu * cbm * 100) / 100 : null),
-    sales_line_value:     svOverride || (spu && cbm ? Math.round(spu * cbm * 100) / 100 : null),
-    notes:                document.getElementById('sl-notes').value.trim() || null,
-    updated_at:           new Date().toISOString(),
+    container_number:        document.getElementById('sl-cnum').value.trim() || null,
+    timber_category:         document.getElementById('sl-category').value,
+    no_of_pieces:            parseInt(document.getElementById('sl-pieces').value) || null,
+    avg_girth_cft:           parseFloat(document.getElementById('sl-girth').value) || null,
+    purchase_volume_cbm:     cbm,
+    selling_volume_cbm:      sellCbm,
+    purchase_price_per_cbm:  ppu,
+    sales_price_per_cbm:     spu,
+    purchase_value_override: pvOverride || (ppu && cbm ? Math.round(ppu * cbm * 100) / 100 : null),
+    sales_value_override:    svOverride || (spu && (sellCbm||cbm) ? Math.round(spu * (sellCbm||cbm) * 100) / 100 : null),
+    notes:                   document.getElementById('sl-notes').value.trim() || null,
+    updated_at:              new Date().toISOString(),
   }).eq('id', lineId);
 
   if (error) { alert('Error: ' + error.message); return; }
@@ -703,12 +704,12 @@ async function addShipmentLineModal(contractId) {
             ${['A Grade','B Grade','C Grade','Mixed','Logs','Sawn Timber','Hardwood','Softwood'].map(g => `<option>${g}</option>`).join('')}
           </select>
         </div>
-        <div class="form-group"><label>Pieces Count</label><input type="number" id="asl-pieces" placeholder="250"></div>
-        <div class="form-group"><label>Girth (inches)</label><input type="number" id="asl-girth" placeholder="18"></div>
-        <div class="form-group"><label>CBM Volume</label><input type="number" id="asl-cbm" step="0.01" placeholder="20.00"></div>
-        <div class="form-group"><label>MT Volume</label><input type="number" id="asl-mt" step="0.01"></div>
-        <div class="form-group"><label>Purchase Price / Unit ($)</label><input type="number" id="asl-ppu" step="0.01" placeholder="300.00"></div>
-        <div class="form-group"><label>Sales Price / Unit ($)</label><input type="number" id="asl-spu" step="0.01"></div>
+        <div class="form-group"><label>No. of Pieces</label><input type="number" id="asl-pieces" placeholder="250"></div>
+        <div class="form-group"><label>Avg Girth (cft)</label><input type="number" id="asl-girth" step="0.01" placeholder="12.5"></div>
+        <div class="form-group"><label>Purchase Volume (CBM)</label><input type="number" id="asl-cbm" step="0.001" placeholder="24.232"></div>
+        <div class="form-group"><label>Selling Volume (CBM)</label><input type="number" id="asl-mt" step="0.001"></div>
+        <div class="form-group"><label>Purchase Price / CBM ($)</label><input type="number" id="asl-ppu" step="0.01" placeholder="620.00"></div>
+        <div class="form-group"><label>Sales Price / CBM ($)</label><input type="number" id="asl-spu" step="0.01"></div>
         <div class="form-group"><label>Purchase Value (override)</label><input type="number" id="asl-pv" step="0.01" placeholder="Leave blank to auto-calc"></div>
         <div class="form-group"><label>Sales Value (override)</label><input type="number" id="asl-sv" step="0.01" placeholder="Leave blank to auto-calc"></div>
         <div class="form-group full"><label>Notes</label><textarea id="asl-notes" rows="2"></textarea></div>
@@ -728,20 +729,21 @@ async function saveAddShipmentLine(contractId) {
   const pvOverride = parseFloat(document.getElementById('asl-pv').value) || null;
   const svOverride = parseFloat(document.getElementById('asl-sv').value) || null;
 
+  const sellCbmAdd = parseFloat(document.getElementById('asl-mt').value) || null;
   const { error } = await sb.from('shipment_lines').insert({
-    contract_id:          contractId,
-    company_id:           S.companyId,
-    container_number:     document.getElementById('asl-cnum').value.trim() || null,
-    timber_category:      document.getElementById('asl-category').value,
-    pieces_count:         parseInt(document.getElementById('asl-pieces').value) || null,
-    girth:                parseInt(document.getElementById('asl-girth').value) || null,
-    cbm_volume:           cbm,
-    mt_volume:            parseFloat(document.getElementById('asl-mt').value) || null,
-    purchase_price_per_unit: ppu,
-    sales_price_per_unit: spu,
-    purchase_line_value:  pvOverride || (ppu && cbm ? Math.round(ppu * cbm * 100) / 100 : null),
-    sales_line_value:     svOverride || (spu && cbm ? Math.round(spu * cbm * 100) / 100 : null),
-    notes:                document.getElementById('asl-notes').value.trim() || null,
+    contract_id:             contractId,
+    company_id:              S.companyId,
+    container_number:        document.getElementById('asl-cnum').value.trim() || null,
+    timber_category:         document.getElementById('asl-category').value,
+    no_of_pieces:            parseInt(document.getElementById('asl-pieces').value) || null,
+    avg_girth_cft:           parseFloat(document.getElementById('asl-girth').value) || null,
+    purchase_volume_cbm:     cbm,
+    selling_volume_cbm:      sellCbmAdd,
+    purchase_price_per_cbm:  ppu,
+    sales_price_per_cbm:     spu,
+    purchase_value_override: pvOverride || (ppu && cbm ? Math.round(ppu * cbm * 100) / 100 : null),
+    sales_value_override:    svOverride || (spu && (sellCbmAdd||cbm) ? Math.round(spu * (sellCbmAdd||cbm) * 100) / 100 : null),
+    notes:                   document.getElementById('asl-notes').value.trim() || null,
   });
 
   if (error) { alert('Error: ' + error.message); return; }
@@ -1267,7 +1269,10 @@ function printBuyerInvoice(contractId) {
   <table>
     <tr><th>Description</th><th>Quantity</th><th>Unit Price</th><th style="text-align:right">Amount (USD)</th></tr>
     ${lines.length > 0
-      ? lines.map(l => `<tr><td>${l.container_number||'Container'}</td><td>${l.pieces_count?l.pieces_count+' pcs':''} ${l.cbm_volume?'/ '+l.cbm_volume+' CBM':''}</td><td>${l.sales_price_per_unit?'$'+Number(l.sales_price_per_unit).toFixed(2)+'/unit':'—'}</td><td style="text-align:right">${l.sales_line_value?'$'+Number(l.sales_line_value).toLocaleString('en-US',{minimumFractionDigits:2}):'—'}</td></tr>`).join('')
+      ? lines.map(l => {
+          const sVal = l.sales_value_override || (l.selling_volume_cbm && l.sales_price_per_cbm ? l.selling_volume_cbm * l.sales_price_per_cbm : null);
+          return `<tr><td>${l.container_number||'Container'}</td><td>${l.no_of_pieces?l.no_of_pieces+' pcs':''} ${l.purchase_volume_cbm?'/ '+l.purchase_volume_cbm+' CBM':''}</td><td>${l.sales_price_per_cbm?'$'+Number(l.sales_price_per_cbm).toFixed(2)+'/CBM':'—'}</td><td style="text-align:right">${sVal?'$'+Number(sVal).toLocaleString('en-US',{minimumFractionDigits:2}):'—'}</td></tr>`;
+        }).join('')
       : `<tr><td colspan="3">${c.product||'—'}</td><td style="text-align:right"></td></tr>`}
     <tr class="total-row"><td colspan="3">Total</td><td style="text-align:right">USD ${Number(c.sales_value||0).toLocaleString('en-US',{minimumFractionDigits:2})}</td></tr>
   </table>
