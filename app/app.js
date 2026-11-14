@@ -153,7 +153,7 @@ async function loadAllData() {
     { data: portGroups },
     { data: countries },
   ] = await Promise.all([
-    sb.from('contract_summary').select('*').eq('company_id', S.companyId).order('deal_date', { ascending: false }),
+    sb.from('contract_summary').select('*').eq('company_id', S.companyId).order('created_at', { ascending: false }),
     sb.from('suppliers').select('*, countries(name)').eq('company_id', S.companyId).eq('is_active', true).order('name'),
     sb.from('customers').select('*, countries(name)').eq('company_id', S.companyId).eq('is_active', true).order('name'),
     sb.from('payments').select('*').eq('company_id', S.companyId).order('payment_date', { ascending: false }),
@@ -174,7 +174,7 @@ async function loadAllData() {
 async function refreshContracts() {
   const { data } = await sb.from('contract_summary')
     .select('*').eq('company_id', S.companyId)
-    .order('deal_date', { ascending: false });
+    .order('created_at', { ascending: false });
   S.contracts = data || [];
 }
 
