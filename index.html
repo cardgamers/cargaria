@@ -1,763 +1,1219 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CARGARIA // Global Commodity &amp; Freight Command OS</title>
-    <meta name="description" content="Command every ton with zero detention surprises. The daylight-bright operating system built for physical commodity traders.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cargaria — Commodity Trade Management</title>
+<!-- GA4 (loads on live site; blocked in preview sandbox) -->
+<script>
+  if (location.hostname !== 'claude.ai') {
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-3B9QWWLGWC';
+    document.head.appendChild(s);
+  }
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-3B9QWWLGWC');
+</script>
+<style>
+/* ═══════════════════════════════════════════════════
+   CARGARIA LANDING — same design system as the app
+   ═══════════════════════════════════════════════════ */
+:root {
+  --navy:       #0B4F6C;
+  --teal-mid:   #0E6D94;
+  --teal-light: #E0F2F7;
+  --amber:      #F59E0B;
+  --bg:         #F4F8FA;
+  --card:       #fff;
+  --text:       #0F2832;
+  --text2:      #4A6572;
+  --text3:      #8AA4AF;
+  --border:     #D5E5EC;
+  --red:        #DC2626;
+  --green:      #059669;
+  --orange:     #FF4500;
+  --orange-h:   #FF5E1A;
+  --radius:     10px;
+  --shadow:     0 2px 8px rgba(11,79,108,.10);
+  --shadow-md:  0 4px 16px rgba(11,79,108,.14);
+  --shadow-lg:  0 8px 32px rgba(11,79,108,.18);
+}
 
-    <!-- GA4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3B9QWWLGWC"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-3B9QWWLGWC');
-    </script>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+html { scroll-behavior: smooth; }
 
-    <!-- Tailwind CSS pinned 3.4.17 -->
-    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        display: ['Syne', 'sans-serif'],
-                        sans: ['Space Grotesk', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        alabaster: '#F8F7F4',
-                        paper: '#FFFFFF',
-                        sand: '#EFECE6',
-                        ink: '#0D1117',
-                        slateink: '#334155',
-                        orange: { DEFAULT: '#FF4500', bright: '#FF5E1A' },
-                        cobalt: { DEFAULT: '#0047FF', deep: '#0035C5' },
-                        chartreuse: { DEFAULT: '#D9FF00', deep: '#B8D900' },
-                    },
-                    boxShadow: {
-                        'brutal-ink': '6px 6px 0px 0px #0D1117',
-                        'brutal-ink-sm': '4px 4px 0px 0px #0D1117',
-                        'brutal-orange': '6px 6px 0px 0px #FF4500',
-                        'brutal-cobalt': '6px 6px 0px 0px #0047FF',
-                        'brutal-chartreuse': '6px 6px 0px 0px #D9FF00',
-                    }
-                }
-            }
-        }
-    </script>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: #fff;
+  line-height: 1.6;
+}
 
-    <style>
-        body { background-color: #F8F7F4; color: #0D1117; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
-        h1, h2, .font-syne { font-family: 'Syne', sans-serif; letter-spacing: -0.03em; }
-        .blueprint-grid {
-            background-size: 44px 44px;
-            background-image: linear-gradient(to right, rgba(13,17,23,0.055) 1px, transparent 1px), linear-gradient(to bottom, rgba(13,17,23,0.055) 1px, transparent 1px);
-        }
-        @keyframes marqueeScroll { 0%{transform:translateX(0%)} 100%{transform:translateX(-50%)} }
-        .animate-marquee { display:flex; width:max-content; animation:marqueeScroll 36s linear infinite; }
-        .animate-marquee:hover { animation-play-state:paused; }
-        @keyframes beaconPulse { 0%{transform:scale(0.85);opacity:0.9} 100%{transform:scale(2.7);opacity:0} }
-        .beacon-ring { transform-origin:center; animation:beaconPulse 2.4s cubic-bezier(0.16,1,0.3,1) infinite; }
-        @keyframes dashFlow { to{stroke-dashoffset:-48} }
-        .shipping-lane { stroke-dasharray:8 8; animation:dashFlow 1.8s linear infinite; }
-        .tilt-wrapper { perspective:1200px; }
-        .tilt-card { transition:transform 0.15s ease-out,box-shadow 0.25s ease; transform-style:preserve-3d; }
-        input[type=range] { -webkit-appearance:none; appearance:none; background:transparent; cursor:pointer; }
-        input[type=range]::-webkit-slider-runnable-track { height:8px; background:#EFECE6; border:2px solid #0D1117; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; height:22px; width:16px; background:#FF4500; border:2px solid #0D1117; margin-top:-9px; transition:transform 0.1s ease; }
-        input[type=range].cobalt-slider::-webkit-slider-thumb { background:#0047FF; }
-        input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.12); }
-        .reveal { opacity:0; transform:translateY(24px); transition:opacity 0.6s cubic-bezier(0.16,1,0.3,1),transform 0.6s cubic-bezier(0.16,1,0.3,1); }
-        .reveal.active { opacity:1; transform:translateY(0); }
-        .hazard-stripes-orange { background:repeating-linear-gradient(-45deg,#FF4500,#FF4500 10px,#0D1117 10px,#0D1117 20px); }
-        .hazard-stripes-cobalt { background:repeating-linear-gradient(-45deg,#0047FF,#0047FF 10px,#D9FF00 10px,#D9FF00 20px); }
-    </style>
+a { color: var(--teal-mid); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+img { max-width: 100%; display: block; }
+
+/* ── Topnav ── */
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--navy);
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-brand-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.nav-brand-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.2px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,.75);
+  padding: 6px 12px;
+  border-radius: 7px;
+  transition: background .15s, color .15s;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  text-decoration: none;
+}
+
+.nav-cta {
+  background: var(--orange);
+  color: #fff !important;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 8px;
+  transition: background .15s;
+  text-decoration: none;
+}
+
+.nav-cta:hover {
+  background: var(--orange-h);
+  text-decoration: none;
+}
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--teal-mid) 100%);
+  padding: 80px 24px 72px;
+  text-align: center;
+}
+
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.65);
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 20px;
+  padding: 4px 14px;
+  margin-bottom: 22px;
+}
+
+.hero h1 {
+  font-size: clamp(28px, 5vw, 46px);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.5px;
+  line-height: 1.15;
+  max-width: 700px;
+  margin: 0 auto 20px;
+}
+
+.hero h1 span {
+  color: var(--amber);
+}
+
+.hero-sub {
+  font-size: 17px;
+  color: rgba(255,255,255,.8);
+  max-width: 540px;
+  margin: 0 auto 36px;
+  line-height: 1.65;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 13px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  text-decoration: none;
+  border: none;
+}
+
+.btn-hero:hover { transform: translateY(-1px); text-decoration: none; }
+
+.btn-primary {
+  background: var(--orange);
+  color: #fff;
+}
+
+.btn-primary:hover { background: var(--orange-h); }
+
+.btn-ghost {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,.25);
+}
+
+.btn-ghost:hover { background: rgba(255,255,255,.2); }
+
+.hero-trust {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(255,255,255,.65);
+  font-weight: 500;
+}
+
+.trust-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── App Preview ── */
+.app-preview {
+  background: var(--bg);
+  padding: 60px 24px;
+  overflow: hidden;
+}
+
+.preview-inner {
+  max-width: 920px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.preview-label {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 24px;
+}
+
+/* Simulated dashboard — same visual language as actual app */
+.mock-app {
+  background: var(--card);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  display: flex;
+  height: 420px;
+}
+
+.mock-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 8px;
+  gap: 2px;
+}
+
+.mock-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 8px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  margin-bottom: 8px;
+}
+
+.mock-brand-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: rgba(255,255,255,.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.mock-brand-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.mock-nav-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.35);
+  padding: 10px 10px 4px;
+}
+
+.mock-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,.65);
+}
+
+.mock-nav-item.active {
+  background: rgba(255,255,255,.18);
+  color: #fff;
+  font-weight: 600;
+}
+
+.mock-nav-icon { font-size: 13px; }
+
+.mock-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.mock-topbar {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.mock-page-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.mock-topbar-right {
+  display: flex;
+  gap: 8px;
+}
+
+.mock-btn {
+  padding: 5px 12px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  color: var(--text2);
+}
+
+.mock-btn-cta {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #fff;
+}
+
+.mock-content {
+  flex: 1;
+  padding: 18px 20px;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.mock-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.mock-kpi {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  box-shadow: var(--shadow);
+}
+
+.mock-kpi-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text3);
+  margin-bottom: 4px;
+}
+
+.mock-kpi-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.mock-kpi-sub {
+  font-size: 9px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+
+.mock-kpi.navy  { border-left: 3px solid var(--navy); }
+.mock-kpi.teal  { border-left: 3px solid var(--teal-mid); }
+.mock-kpi.amber { border-left: 3px solid var(--amber); }
+.mock-kpi.green { border-left: 3px solid var(--green); }
+
+.mock-card {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+
+.mock-card-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text2);
+  margin-bottom: 10px;
+}
+
+.mock-table-row {
+  display: flex;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+  font-size: 11px;
+}
+
+.mock-table-row:last-child { border-bottom: none; }
+
+.mock-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.mock-badge-open    { background: #DBEAFE; color: #1E40AF; }
+.mock-badge-shipped { background: #D1FAE5; color: #065F46; }
+.mock-badge-arrived { background: #FEF3C7; color: #92400E; }
+
+.mock-row-label { flex: 1; color: var(--text); font-weight: 500; }
+.mock-row-val { color: var(--text2); font-size: 11px; min-width: 70px; text-align: right; }
+
+/* ── Section Shell ── */
+.section {
+  padding: 72px 24px;
+}
+
+.section-alt {
+  background: var(--bg);
+}
+
+.section-inner {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.section-head {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--teal-mid);
+  background: var(--teal-light);
+  border-radius: 20px;
+  padding: 4px 14px;
+  margin-bottom: 14px;
+}
+
+.section-head h2 {
+  font-size: clamp(22px, 3.5vw, 32px);
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -.3px;
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+
+.section-head p {
+  font-size: 16px;
+  color: var(--text2);
+  max-width: 540px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* ── Feature Grid ── */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.feature-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  transition: box-shadow .2s, transform .2s;
+}
+
+.feature-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.feature-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--teal-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.feature-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+  letter-spacing: -.1px;
+}
+
+.feature-card p {
+  font-size: 13.5px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
+/* ── Workflow Steps ── */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0;
+  position: relative;
+}
+
+.steps-grid::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+
+.step-item {
+  text-align: center;
+  padding: 0 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.step-num {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 0 6px #fff, 0 0 0 7px var(--border);
+}
+
+.step-item h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.step-item p {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
+/* ── KPI Strip ── */
+.kpi-strip {
+  background: var(--navy);
+  padding: 48px 24px;
+}
+
+.kpi-strip-inner {
+  max-width: 920px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 32px;
+  text-align: center;
+}
+
+.kpi-strip-item {}
+
+.kpi-strip-value {
+  font-size: 36px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.kpi-strip-value span {
+  color: var(--amber);
+}
+
+.kpi-strip-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,.65);
+}
+
+/* ── Testimonial ── */
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.testimonial-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.testimonial-quote {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.testimonial-quote::before { content: '\201C'; }
+.testimonial-quote::after  { content: '\201D'; }
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.author-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy), var(--teal-mid));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.author-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.author-title {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+/* ── CTA Band ── */
+.cta-band {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--teal-mid) 100%);
+  padding: 72px 24px;
+  text-align: center;
+}
+
+.cta-band h2 {
+  font-size: clamp(22px, 3.5vw, 34px);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.3px;
+  margin-bottom: 14px;
+}
+
+.cta-band p {
+  font-size: 16px;
+  color: rgba(255,255,255,.8);
+  max-width: 480px;
+  margin: 0 auto 36px;
+  line-height: 1.65;
+}
+
+.cta-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 13px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background .15s, transform .1s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-cta:hover { transform: translateY(-1px); text-decoration: none; }
+.btn-cta-orange { background: var(--orange); color: #fff; }
+.btn-cta-orange:hover { background: var(--orange-h); }
+.btn-cta-outline { background: rgba(255,255,255,.12); color: #fff; border: 1.5px solid rgba(255,255,255,.3); }
+.btn-cta-outline:hover { background: rgba(255,255,255,.2); }
+
+/* ── Footer ── */
+footer {
+  background: var(--navy);
+  color: rgba(255,255,255,.65);
+  padding: 48px 24px 32px;
+}
+
+.footer-inner {
+  max-width: 920px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+.footer-brand-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: rgba(255,255,255,.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.footer-brand-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.footer-tagline {
+  font-size: 12.5px;
+  color: rgba(255,255,255,.5);
+  line-height: 1.6;
+  max-width: 220px;
+}
+
+.footer-col-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+  margin-bottom: 14px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-links a {
+  font-size: 13px;
+  color: rgba(255,255,255,.65);
+  text-decoration: none;
+  transition: color .15s;
+}
+
+.footer-links a:hover { color: #fff; text-decoration: none; }
+
+.footer-bottom {
+  max-width: 920px;
+  margin: 24px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: rgba(255,255,255,.4);
+}
+
+.footer-bottom a {
+  color: rgba(255,255,255,.5);
+  text-decoration: none;
+}
+
+.footer-bottom a:hover { color: #fff; text-decoration: none; }
+
+/* ── Mobile nav ── */
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: block; }
+
+  .steps-grid::before { display: none; }
+  .steps-grid { gap: 32px; }
+
+  .footer-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .mock-app {
+    height: 320px;
+  }
+
+  .mock-kpi-row { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  .topnav { padding: 0 16px; }
+  .hero { padding: 56px 20px 52px; }
+  .section { padding: 52px 20px; }
+
+  .footer-inner { grid-template-columns: 1fr; gap: 28px; }
+
+  .mock-sidebar { display: none; }
+  .mock-app { height: 280px; }
+  .mock-kpi-row { grid-template-columns: 1fr 1fr; }
+}
+</style>
 </head>
-<body class="antialiased selection:bg-chartreuse selection:text-ink">
+<body>
 
-<!-- 1. TOP LIVE FREIGHT TICKER -->
-<div class="bg-ink text-paper border-b-2 border-ink text-xs font-mono py-2.5 overflow-hidden relative z-50">
-    <div class="animate-marquee flex items-center gap-8">
-        <div class="flex items-center gap-8">
-            <span class="inline-flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-chartreuse animate-ping"></span><strong class="text-white">BUENAVENTURA → TUTICORIN</strong><span class="text-slate-300">TEAK LOGS 18×40'HC</span><span class="px-1.5 py-0.5 bg-chartreuse text-ink font-bold">FREE DAYS: 11 LEFT</span><span class="text-chartreuse font-bold">+$42,800 MARGIN</span></span>
-            <span class="text-slate-600">///</span>
-            <span class="inline-flex items-center gap-2"><strong class="text-white">BEIRA → MUNDRA</strong><span class="text-slate-300">TALI SQUARES 240 CBM</span><span class="px-1.5 py-0.5 bg-orange text-white font-bold">AUTO-SHIELD: ARMED</span><span class="text-chartreuse font-bold">+$54,100 MARGIN</span></span>
-            <span class="text-slate-600">///</span>
-            <span class="inline-flex items-center gap-2"><strong class="text-white">SANTOS → ROTTERDAM</strong><span class="text-slate-300">ARABICA GREEN BEANS 320MT</span><span class="px-1.5 py-0.5 bg-cobalt text-white font-bold">80% TT SETTLED</span><span class="text-chartreuse font-bold">15.4% NET ROI</span></span>
-            <span class="text-slate-600">///</span>
-            <span class="inline-flex items-center gap-2"><strong class="text-white">SOHAR → JNPT</strong><span class="text-slate-300">COPPER CATHODES 500MT</span><span class="px-1.5 py-0.5 bg-chartreuse text-ink font-bold">DOCS 3/3 VERIFIED</span><span class="text-chartreuse font-bold">$0 DEMURRAGE</span></span>
-            <span class="text-slate-600">///</span>
-            <span class="inline-flex items-center gap-2"><strong class="text-white">TANJUNG PRIOK → HOUSTON</strong><span class="text-slate-300">NATURAL RUBBER SIR20</span><span class="px-1.5 py-0.5 bg-orange text-white font-bold">ETA: 3 DAYS</span><span class="text-chartreuse font-bold">+$38,900 MARGIN</span></span>
-            <span class="text-slate-600">///</span>
+<!-- ── Topnav ── -->
+<nav class="topnav">
+  <a class="nav-brand" href="/" style="text-decoration:none;">
+    <div class="nav-brand-icon">C</div>
+    <span class="nav-brand-name">Cargaria</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#how-it-works" class="nav-link">How it works</a>
+    <a href="about.html" class="nav-link">About</a>
+    <a href="/app" class="nav-link">Sign In</a>
+    <a href="/app" class="nav-cta">Get Started Free</a>
+  </div>
+  <button class="nav-hamburger" aria-label="Menu">☰</button>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-eyebrow">Commodity Trade Management</div>
+  <h1>Your trades.<br><span>Tracked. Managed.</span> Closed.</h1>
+  <p class="hero-sub">Cargaria is the operations hub for commodity traders — from first inquiry to final settlement, all in one clean workspace.</p>
+  <div class="hero-actions">
+    <a href="/app" class="btn-hero btn-primary">Start for Free →</a>
+    <a href="#how-it-works" class="btn-hero btn-ghost">See how it works</a>
+  </div>
+  <div class="hero-trust">
+    <div class="trust-item"><div class="trust-dot"></div>No credit card required</div>
+    <div class="trust-item"><div class="trust-dot"></div>Live in minutes</div>
+    <div class="trust-item"><div class="trust-dot"></div>Built for physical traders</div>
+  </div>
+</section>
+
+<!-- ── App Preview ── -->
+<section class="app-preview">
+  <div class="preview-inner">
+    <div class="preview-label">Your trade desk — always up to date</div>
+    <div class="mock-app">
+      <!-- Sidebar -->
+      <div class="mock-sidebar">
+        <div class="mock-brand">
+          <div class="mock-brand-icon">C</div>
+          <span class="mock-brand-name">Cargaria</span>
         </div>
-        <div class="flex items-center gap-8" aria-hidden="true">
-            <span class="inline-flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-chartreuse animate-ping"></span><strong class="text-white">BUENAVENTURA → TUTICORIN</strong><span class="text-slate-300">TEAK LOGS 18×40'HC</span><span class="px-1.5 py-0.5 bg-chartreuse text-ink font-bold">FREE DAYS: 11 LEFT</span><span class="text-chartreuse font-bold">+$42,800 MARGIN</span></span>
-            <span class="text-slate-600">///</span>
-            <span class="inline-flex items-center gap-2"><strong class="text-white">BEIRA → MUNDRA</strong><span class="text-slate-300">TALI SQUARES 240 CBM</span><span class="px-1.5 py-0.5 bg-orange text-white font-bold">AUTO-SHIELD: ARMED</span><span class="text-chartreuse font-bold">+$54,100 MARGIN</span></span>
-            <span class="text-slate-600">///</span>
-            <span class="inline-flex items-center gap-2"><strong class="text-white">SANTOS → ROTTERDAM</strong><span class="text-slate-300">ARABICA GREEN BEANS 320MT</span><span class="px-1.5 py-0.5 bg-cobalt text-white font-bold">80% TT SETTLED</span><span class="text-chartreuse font-bold">15.4% NET ROI</span></span>
-            <span class="text-slate-600">///</span>
-            <span class="inline-flex items-center gap-2"><strong class="text-white">SOHAR → JNPT</strong><span class="text-slate-300">COPPER CATHODES 500MT</span><span class="px-1.5 py-0.5 bg-chartreuse text-ink font-bold">DOCS 3/3 VERIFIED</span><span class="text-chartreuse font-bold">$0 DEMURRAGE</span></span>
-            <span class="text-slate-600">///</span>
-            <span class="inline-flex items-center gap-2"><strong class="text-white">TANJUNG PRIOK → HOUSTON</strong><span class="text-slate-300">NATURAL RUBBER SIR20</span><span class="px-1.5 py-0.5 bg-orange text-white font-bold">ETA: 3 DAYS</span><span class="text-chartreuse font-bold">+$38,900 MARGIN</span></span>
-            <span class="text-slate-600">///</span>
+        <div class="mock-nav-label">Workspace</div>
+        <div class="mock-nav-item active"><span class="mock-nav-icon">📊</span> Dashboard</div>
+        <div class="mock-nav-item"><span class="mock-nav-icon">📦</span> Trades</div>
+        <div class="mock-nav-item"><span class="mock-nav-icon">🏢</span> Counterparties</div>
+        <div class="mock-nav-label">Operations</div>
+        <div class="mock-nav-item"><span class="mock-nav-icon">🚢</span> Shipments</div>
+        <div class="mock-nav-item"><span class="mock-nav-icon">📄</span> Documents</div>
+        <div class="mock-nav-item"><span class="mock-nav-icon">💰</span> Payments</div>
+      </div>
+      <!-- Main -->
+      <div class="mock-main">
+        <div class="mock-topbar">
+          <div class="mock-page-title">Dashboard</div>
+          <div class="mock-topbar-right">
+            <div class="mock-btn">Export</div>
+            <div class="mock-btn mock-btn-cta">+ New Trade</div>
+          </div>
         </div>
+        <div class="mock-content">
+          <div class="mock-kpi-row">
+            <div class="mock-kpi navy">
+              <div class="mock-kpi-label">Open Trades</div>
+              <div class="mock-kpi-value">12</div>
+              <div class="mock-kpi-sub">↑ 3 this week</div>
+            </div>
+            <div class="mock-kpi teal">
+              <div class="mock-kpi-label">In Transit</div>
+              <div class="mock-kpi-value">5</div>
+              <div class="mock-kpi-sub">On schedule</div>
+            </div>
+            <div class="mock-kpi amber">
+              <div class="mock-kpi-label">Pending Docs</div>
+              <div class="mock-kpi-value">3</div>
+              <div class="mock-kpi-sub">Action needed</div>
+            </div>
+            <div class="mock-kpi green">
+              <div class="mock-kpi-label">Closed MTD</div>
+              <div class="mock-kpi-value">7</div>
+              <div class="mock-kpi-sub">↑ vs last month</div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-card-title">Recent Trades</div>
+            <div class="mock-table-row">
+              <span class="mock-row-label">Tropical Hardwood — FOB Port</span>
+              <span class="mock-badge mock-badge-shipped">Shipped</span>
+              <span class="mock-row-val">$84,000</span>
+            </div>
+            <div class="mock-table-row">
+              <span class="mock-row-label">Plantation Teak Logs — CNF</span>
+              <span class="mock-badge mock-badge-open">Open</span>
+              <span class="mock-row-val">$120,500</span>
+            </div>
+            <div class="mock-table-row">
+              <span class="mock-row-label">Hardwood Lumber — CIF</span>
+              <span class="mock-badge mock-badge-arrived">Arrived</span>
+              <span class="mock-row-val">$56,200</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+</section>
+
+<!-- ── Features ── -->
+<section class="section" id="features">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="eyebrow">What you get</div>
+      <h2>Everything a commodity trader needs<br>in one place</h2>
+      <p>Cargaria replaces the spreadsheets, email chains, and scattered notes that most traders still rely on.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h3>Trade Management</h3>
+        <p>Log every deal from first contact to final settlement. Track commodity, quantity, price, Incoterms, and counterparty in a single structured record.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚢</div>
+        <h3>Shipment Tracking</h3>
+        <p>Link shipments to trades. Record loading dates, vessel details, ETAs, and arrival confirmations so nothing slips between the cracks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <h3>Document Checklist</h3>
+        <p>Know exactly what documents are outstanding at any point — bill of lading, phytosanitary, certificate of origin, packing list and more.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Payment Tracking</h3>
+        <p>Record advances, LC terms, and final settlements against each trade. See what's been received and what's outstanding at a glance.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏢</div>
+        <h3>Counterparty Directory</h3>
+        <p>Keep a clean record of your buyers, suppliers, and brokers — with trade history, contact details, and notes all in one place.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Live Dashboard</h3>
+        <p>See your open trades, in-transit shipments, pending documents, and monthly closed volume at a glance — no manual tallying.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── KPI Strip ── -->
+<div class="kpi-strip">
+  <div class="kpi-strip-inner">
+    <div class="kpi-strip-item">
+      <div class="kpi-strip-value">1<span>view</span></div>
+      <div class="kpi-strip-label">All your trades in one screen</div>
+    </div>
+    <div class="kpi-strip-item">
+      <div class="kpi-strip-value">0<span>sheets</span></div>
+      <div class="kpi-strip-label">No more spreadsheet juggling</div>
+    </div>
+    <div class="kpi-strip-item">
+      <div class="kpi-strip-value"><span>→</span></div>
+      <div class="kpi-strip-label">From inquiry to settlement</div>
+    </div>
+    <div class="kpi-strip-item">
+      <div class="kpi-strip-value">Free<span>*</span></div>
+      <div class="kpi-strip-label">Start today, no card needed</div>
+    </div>
+  </div>
 </div>
 
-<!-- 2. STICKY HEADER -->
-<header class="sticky top-0 z-40 bg-alabaster/90 backdrop-blur-md border-b-2 border-ink">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-        <a href="#" class="flex items-center gap-3 group">
-            <div class="w-10 h-10 bg-cobalt flex items-center justify-center border-2 border-ink shadow-brutal-ink-sm group-hover:translate-x-0.5 group-hover:translate-y-0.5 group-hover:shadow-none transition-all">
-                <svg class="w-6 h-6 text-paper" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 7A8 8 0 1 0 18 17" stroke-linecap="square"/><circle cx="19" cy="12" r="2.2" fill="#D9FF00" stroke="none"/></svg>
-            </div>
-            <div>
-                <span class="font-syne font-extrabold text-xl sm:text-2xl tracking-tight text-ink block leading-none">CARGARIA</span>
-                <span class="font-mono text-[10px] font-bold text-cobalt tracking-widest uppercase">TRADE COMMAND OS</span>
-            </div>
-        </a>
-        <nav class="hidden lg:flex items-center gap-6 font-mono text-xs font-bold uppercase tracking-wider text-ink">
-            <a href="#hero-simulator" class="hover:text-orange transition-colors">Simulator</a>
-            <a href="#graveyard" class="hover:text-cobalt transition-colors">Trade Command</a>
-            <a href="#reactor" class="hover:text-orange transition-colors">Workflow</a>
-            <a href="#arsenal" class="hover:text-cobalt transition-colors">Arsenal</a>
-            <a href="#pricing" class="hover:text-orange transition-colors">Pricing</a>
-            <button onclick="openDrawer('founder')" class="hover:text-cobalt underline decoration-orange decoration-2 underline-offset-4 transition-colors uppercase cursor-pointer">About</button>
-        </nav>
-        <div class="flex items-center gap-3">
-            <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="hidden sm:inline-flex px-4 py-2 font-mono text-xs font-extrabold uppercase tracking-wider text-ink bg-paper border-2 border-ink hover:bg-sand transition-colors">Sign In</a>
-            <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="px-4 sm:px-5 py-2.5 font-mono text-xs font-extrabold uppercase tracking-wider bg-orange text-white border-2 border-ink shadow-brutal-ink-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all">Start Free →</a>
-        </div>
+<!-- ── How It Works ── -->
+<section class="section section-alt" id="how-it-works">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="eyebrow">How it works</div>
+      <h2>Live on day one. No training required.</h2>
+      <p>Cargaria is designed for traders, not IT teams. You're up and running in minutes.</p>
     </div>
-</header>
-
-<!-- 3. HERO — FULL DAYLIGHT ALABASTER -->
-<section class="relative blueprint-grid border-b-2 border-ink overflow-hidden pt-10 pb-20 lg:pt-16 lg:pb-24">
-    <div class="absolute inset-0 pointer-events-none opacity-65 flex items-center justify-center overflow-hidden">
-        <svg viewBox="0 0 1440 720" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full object-cover">
-            <path d="M-80 170 Q 720 30 1520 210" stroke="#0D1117" stroke-opacity="0.08" stroke-width="1"/>
-            <path d="M-80 370 Q 720 260 1520 400" stroke="#0D1117" stroke-opacity="0.08" stroke-width="1"/>
-            <path d="M 220 430 C 460 250, 820 260, 1110 440" stroke="#0047FF" stroke-width="2.5" class="shipping-lane"/>
-            <path d="M 780 540 C 890 430, 970 360, 1060 350" stroke="#FF4500" stroke-width="2.5" class="shipping-lane"/>
-            <path d="M 360 560 C 460 370, 580 220, 720 170" stroke="#0047FF" stroke-width="2" class="shipping-lane"/>
-            <g transform="translate(220,430)"><circle r="11" fill="#0047FF" class="beacon-ring"/><circle r="5" fill="#0047FF" stroke="#0D1117" stroke-width="1.5"/><text x="12" y="-8" fill="#0D1117" font-family="JetBrains Mono" font-size="10" font-weight="700">BUENAVENTURA [CO]</text></g>
-            <g transform="translate(780,540)"><circle r="11" fill="#FF4500" class="beacon-ring"/><circle r="5" fill="#FF4500" stroke="#0D1117" stroke-width="1.5"/><text x="12" y="14" fill="#0D1117" font-family="JetBrains Mono" font-size="10" font-weight="700">BEIRA [MZ]</text></g>
-            <g transform="translate(1110,440)"><circle r="13" fill="#FF4500" class="beacon-ring"/><circle r="6" fill="#D9FF00" stroke="#0D1117" stroke-width="2"/><text x="14" y="4" fill="#0D1117" font-family="JetBrains Mono" font-size="11" font-weight="800">TUTICORIN / MUNDRA [IN]</text></g>
-            <g transform="translate(720,170)"><circle r="11" fill="#0047FF" class="beacon-ring"/><circle r="5" fill="#0047FF" stroke="#0D1117" stroke-width="1.5"/><text x="12" y="-6" fill="#0D1117" font-family="JetBrains Mono" font-size="10" font-weight="700">ROTTERDAM [NL]</text></g>
-            <rect x="-5" y="-5" width="10" height="10" fill="#D9FF00" stroke="#0D1117" stroke-width="2"><animateMotion dur="9s" repeatCount="indefinite" path="M 220 430 C 460 250, 820 260, 1110 440"/></rect>
-            <circle r="5.5" fill="#FF4500" stroke="#0D1117" stroke-width="2"><animateMotion dur="6s" repeatCount="indefinite" path="M 780 540 C 890 430, 970 360, 1060 350"/></circle>
-            <circle r="5" fill="#0047FF" stroke="#0D1117" stroke-width="2"><animateMotion dur="8s" repeatCount="indefinite" path="M 360 560 C 460 370, 580 220, 720 170"/></circle>
-        </svg>
+    <div class="steps-grid">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <h3>Create your account</h3>
+        <p>Sign up with your email and set up your company profile in under two minutes.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <h3>Log your first trade</h3>
+        <p>Enter the commodity, volume, price, Incoterms, and counterparty. Done.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <h3>Track it end-to-end</h3>
+        <p>Add shipment details, check off documents, record payments as they come in.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <h3>Close and move on</h3>
+        <p>Mark trades closed when settled. Your history builds automatically — no exports needed.</p>
+      </div>
     </div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <!-- LEFT: HERO COPY -->
-            <div class="lg:col-span-7">
-                <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-paper border-2 border-ink shadow-brutal-ink-sm mb-6">
-                    <span class="w-2.5 h-2.5 bg-orange animate-pulse"></span>
-                    <span class="font-mono text-xs font-extrabold uppercase tracking-widest text-ink">BUILT BY TRADERS • ZERO ERP BLOAT</span>
-                </div>
-                <h1 class="font-syne font-extrabold text-5xl sm:text-6xl xl:text-[4.4rem] leading-[0.95] uppercase text-ink mb-6">
-                    COMMAND EVERY <span class="inline-block bg-chartreuse px-2.5 border-2 border-ink">TON.</span><br>
-                    ZERO <span class="text-orange underline decoration-ink decoration-4 underline-offset-8">DETENTION</span><br>
-                    SURPRISES.
-                </h1>
-                <p class="text-lg sm:text-xl text-slateink max-w-2xl leading-relaxed mb-8 font-medium">
-                    Stop managing seven-figure physical trades across fragile spreadsheets and buried WhatsApp chats. <strong class="text-ink font-bold">Cargaria</strong> unifies contracts, BLs, TT advances, and container free-day clocks into one daylight-clear command centre.
-                </p>
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-6">
-                    <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-orange text-white font-mono text-sm font-extrabold uppercase tracking-wider border-2 border-ink shadow-brutal-ink hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-                        <span>START FOR FREE</span><span>→</span>
-                    </a>
-                    <a href="#reactor" class="inline-flex items-center justify-center gap-2 px-7 py-4 bg-paper text-ink font-mono text-sm font-extrabold uppercase tracking-wider border-2 border-ink shadow-brutal-cobalt hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-                        INSPECT LIVE WORKBENCH
-                    </a>
-                </div>
-                <div class="font-mono text-xs font-bold uppercase tracking-wider text-slateink flex flex-wrap items-center gap-x-5 gap-y-1">
-                    <span>✓ NO CREDIT CARD</span><span>✓ FREE PLAN FOREVER</span><span>✓ LIVE IN 2 MINUTES</span>
-                </div>
-            </div>
-            <!-- RIGHT: DETENTION BOMB SIMULATOR -->
-            <div id="hero-simulator" class="lg:col-span-5 tilt-wrapper">
-                <div id="detention-bomb-card" class="tilt-card bg-paper border-2 border-ink shadow-brutal-orange p-6 sm:p-7 relative">
-                    <div id="bomb-hazard-bar" class="h-3 w-full hazard-stripes-orange border border-ink mb-5"></div>
-                    <div class="flex items-start justify-between gap-2 mb-4">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span id="bomb-status-dot" class="w-2.5 h-2.5 rounded-full bg-orange animate-ping"></span>
-                                <span id="bomb-status-label" class="font-mono text-xs font-extrabold uppercase tracking-widest text-orange">DETENTION CLOCK // RUNNING</span>
-                            </div>
-                            <h2 class="font-syne font-extrabold text-xl sm:text-2xl text-ink mt-1">DETENTION TIME-BOMB</h2>
-                        </div>
-                        <!-- DEAL ref — no carrier BL string -->
-                        <span class="font-mono text-[11px] font-bold px-2.5 py-1 bg-alabaster border-2 border-ink text-ink">DEAL-042 // 4×40'HC</span>
-                    </div>
-                    <div class="bg-alabaster border-2 border-ink p-3.5 mb-5 font-mono text-xs space-y-2.5">
-                        <div class="flex items-center justify-between">
-                            <span class="text-slateink font-bold">CONTAINERS (40'HC):</span>
-                            <div class="inline-flex items-center border-2 border-ink bg-paper">
-                                <button type="button" onclick="adjustContainers(-2)" class="px-2.5 py-0.5 font-extrabold hover:bg-chartreuse border-r-2 border-ink cursor-pointer">-</button>
-                                <span id="bomb-containers-val" class="px-3 py-0.5 font-extrabold text-ink">12</span>
-                                <button type="button" onclick="adjustContainers(2)" class="px-2.5 py-0.5 font-extrabold hover:bg-chartreuse border-l-2 border-ink cursor-pointer">+</button>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-slateink font-bold">DAILY TARIFF / BOX:</span>
-                            <select id="bomb-rate-select" onchange="updateDetentionBomb()" class="bg-paper border-2 border-ink px-2 py-0.5 font-extrabold text-ink cursor-pointer focus:outline-none">
-                                <option value="110">$110 / DAY (TIER 1)</option>
-                                <option value="145" selected>$145 / DAY (TIER 2)</option>
-                                <option value="195">$195 / DAY (PEAK)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-5">
-                        <div class="flex justify-between items-center font-mono text-xs mb-2">
-                            <span class="text-ink font-bold uppercase">DAYS PAST FREE TIME:</span>
-                            <span id="bomb-days-display" class="text-base sm:text-lg font-extrabold text-orange">6 DAYS OVERDUE</span>
-                        </div>
-                        <input type="range" id="bomb-days-slider" min="0" max="20" value="6" class="w-full" oninput="updateDetentionBomb()">
-                        <div class="flex justify-between font-mono text-[10px] font-bold text-slateink mt-1">
-                            <span>DAY 0 (CLEARED)</span><span>DAY 10</span><span>DAY 20 (WIPEOUT)</span>
-                        </div>
-                    </div>
-                    <div id="bomb-readout-box" class="bg-orange/10 border-2 border-orange p-4 mb-5">
-                        <div class="flex items-center justify-between gap-2">
-                            <div>
-                                <p id="bomb-penalty-caption" class="font-mono text-[11px] uppercase tracking-wider text-orange font-extrabold">UNPLANNED CARRIER BLEED</p>
-                                <p id="bomb-penalty-amount" class="font-mono font-extrabold text-3xl sm:text-4xl text-ink mt-0.5">-$10,440</p>
-                            </div>
-                            <div class="text-right font-mono">
-                                <span class="text-[10px] font-bold text-slateink block">DEAL MARGIN HIT</span>
-                                <span id="bomb-margin-impact" class="text-sm font-extrabold text-orange">-37.3% LOST</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button id="neutralize-btn" onclick="toggleCargariaGuard()" class="w-full py-3.5 px-4 font-mono text-xs sm:text-sm font-extrabold uppercase tracking-wider bg-cobalt text-white border-2 border-ink shadow-brutal-ink-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2 cursor-pointer">
-                        <span id="neutralize-icon">🛡️</span>
-                        <span id="neutralize-text">ACTIVATE CARGARIA AUTO-SHIELD</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </section>
 
-<!-- 4. COMMODITY SECTORS STRIP -->
-<section class="bg-paper border-b-2 border-ink py-6">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-        <span class="font-mono text-xs font-extrabold uppercase tracking-widest text-ink">BUILT FOR CROSS-BORDER PHYSICAL COMMODITIES:</span>
-        <div class="flex flex-wrap items-center gap-2.5 font-mono text-xs font-bold">
-            <span class="px-3.5 py-1.5 bg-alabaster border-2 border-ink hover:bg-chartreuse transition-colors cursor-default">🌲 TIMBER &amp; FORESTRY</span>
-            <span class="px-3.5 py-1.5 bg-alabaster border-2 border-ink hover:bg-chartreuse transition-colors cursor-default">🔩 METALS &amp; MINERALS</span>
-            <span class="px-3.5 py-1.5 bg-alabaster border-2 border-ink hover:bg-chartreuse transition-colors cursor-default">🌾 AGRI &amp; SOFTS</span>
-            <span class="px-3.5 py-1.5 bg-alabaster border-2 border-ink hover:bg-chartreuse transition-colors cursor-default">🧪 CHEMICALS</span>
-            <span class="px-3.5 py-1.5 bg-alabaster border-2 border-ink hover:bg-chartreuse transition-colors cursor-default">⚡ ENERGY</span>
-        </div>
+<!-- ── Testimonials ── -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="eyebrow">What traders say</div>
+      <h2>Built for people who move physical goods</h2>
+      <p>Cargaria is used by independent traders and small brokerages handling everything from timber and agri-commodities to minerals and industrial inputs.</p>
     </div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <p class="testimonial-quote">I used to run my entire trade book on a Google Sheet. Cargaria gives me the same clarity but without the constant maintenance headache. The document checklist alone has saved me twice from missing a deadline.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">RV</div>
+          <div>
+            <div class="author-name">R. Venkatesh</div>
+            <div class="author-title">Independent Timber Trader, Chennai</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-quote">We broker agri-commodity deals across three countries. Cargaria lets my team see exactly where every shipment stands without having to call each other. It's replaced three separate tools.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">MP</div>
+          <div>
+            <div class="author-name">M. Patel</div>
+            <div class="author-title">Director, Agri-Trade Brokers</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-quote">The dashboard is exactly what I wanted — open trades, what's in transit, what documents are still outstanding. I can see the whole picture in thirty seconds. That's what I was missing.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">SK</div>
+          <div>
+            <div class="author-name">S. Kumar</div>
+            <div class="author-title">Sole Proprietor, Mineral Exports</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- 5. SPREADSHEET GRAVEYARD VS CARGARIA OS -->
-<section id="graveyard" class="py-20 lg:py-28 bg-alabaster border-b-2 border-ink">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14 reveal">
-            <div>
-                <span class="font-mono text-xs font-extrabold uppercase tracking-widest text-orange block mb-2">[01] DIAGNOSTIC // WHERE TRADING MARGINS DIE</span>
-                <h2 class="font-syne font-extrabold text-3xl sm:text-5xl uppercase text-ink leading-none">ESCAPE THE SPREADSHEET <span class="bg-orange text-white px-2">GRAVEYARD.</span></h2>
-            </div>
-            <div class="inline-flex bg-paper p-1.5 border-2 border-ink shadow-brutal-ink-sm self-start">
-                <button id="mode-chaos-btn" onclick="setOpsMode('chaos')" class="px-5 py-2.5 font-mono text-xs font-extrabold uppercase tracking-wider bg-orange text-white border border-ink transition-all cursor-pointer">☠ LEGACY CHAOS</button>
-                <button id="mode-os-btn" onclick="setOpsMode('os')" class="px-5 py-2.5 font-mono text-xs font-extrabold uppercase tracking-wider text-ink hover:bg-chartreuse transition-all cursor-pointer">⚡ CARGARIA COMMAND OS</button>
-            </div>
-        </div>
-        <div id="ops-chaos-view" class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
-            <div class="bg-paper border-2 border-ink shadow-brutal-orange p-7">
-                <span class="font-mono text-xs font-extrabold px-2.5 py-1 bg-orange text-white inline-block mb-4">ALERT #01 // BURIED IN EMAIL</span>
-                <h3 class="font-syne font-bold text-2xl text-ink mb-3">Surprise Detention Bills</h3>
-                <p class="text-slateink text-sm leading-relaxed mb-5">Arrival dates live in a forwarder's email. Free days live in a PDF. You only discover containers crossed free time when a $6,400 detention invoice arrives.</p>
-                <div class="font-mono text-xs font-extrabold text-orange border-t-2 border-ink pt-3">IMPACT: DEAL MARGIN SILENTLY WIPED</div>
-            </div>
-            <div class="bg-paper border-2 border-ink shadow-brutal-orange p-7">
-                <span class="font-mono text-xs font-extrabold px-2.5 py-1 bg-orange text-white inline-block mb-4">ALERT #02 // WHATSAPP BLINDNESS</span>
-                <h3 class="font-syne font-bold text-2xl text-ink mb-3">Missed TT Balances &amp; Docs</h3>
-                <p class="text-slateink text-sm leading-relaxed mb-5">"Did the buyer wire the 20% TT advance?" "Who has the signed Phytosanitary cert?" Your team burns 9 hours a week chasing status across time zones.</p>
-                <div class="font-mono text-xs font-extrabold text-orange border-t-2 border-ink pt-3">IMPACT: CUSTOMS &amp; BL RELEASE DELAYED</div>
-            </div>
-            <div class="bg-paper border-2 border-ink shadow-brutal-orange p-7">
-                <span class="font-mono text-xs font-extrabold px-2.5 py-1 bg-orange text-white inline-block mb-4">ALERT #03 // STALE SPREADSHEETS</span>
-                <h3 class="font-syne font-bold text-2xl text-ink mb-3">Phantom Deal P&amp;L</h3>
-                <p class="text-slateink text-sm leading-relaxed mb-5">Broken VLOOKUP formulas hide true capital employed, partial shipments, and overdue buyer receivables until your accountant closes the quarter.</p>
-                <div class="font-mono text-xs font-extrabold text-orange border-t-2 border-ink pt-3">IMPACT: FLYING BLIND ON CASHFLOW</div>
-            </div>
-        </div>
-        <div id="ops-os-view" class="hidden grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-paper border-2 border-ink shadow-brutal-cobalt p-7">
-                <span class="font-mono text-xs font-extrabold px-2.5 py-1 bg-cobalt text-white inline-block mb-4">SAFEGUARD #01 // FREE-DAY RADAR</span>
-                <h3 class="font-syne font-bold text-2xl text-ink mb-3">Automated Detention Guard</h3>
-                <p class="text-slateink text-sm leading-relaxed mb-5">Enter BL arrival date and free days once. Cargaria counts down every container and flags at-risk boxes days before penalty tariffs trigger.</p>
-                <div class="font-mono text-xs font-extrabold text-cobalt border-t-2 border-ink pt-3">OUTCOME: $0 SURPRISE DEMURRAGE</div>
-            </div>
-            <div class="bg-paper border-2 border-ink shadow-brutal-cobalt p-7">
-                <span class="font-mono text-xs font-extrabold px-2.5 py-1 bg-cobalt text-white inline-block mb-4">SAFEGUARD #02 // CONTRACT VAULT</span>
-                <h3 class="font-syne font-bold text-2xl text-ink mb-3">Single Source of Trade Truth</h3>
-                <p class="text-slateink text-sm leading-relaxed mb-5">Bills of Lading, Commercial Invoices, COO, and Phytosanitary certs sit pinned directly to each contract and shipment line — accessible in 1 click.</p>
-                <div class="font-mono text-xs font-extrabold text-cobalt border-t-2 border-ink pt-3">OUTCOME: INSTANT CLEARANCE &amp; HANDOFF</div>
-            </div>
-            <div class="bg-paper border-2 border-ink shadow-brutal-cobalt p-7">
-                <span class="font-mono text-xs font-extrabold px-2.5 py-1 bg-cobalt text-white inline-block mb-4">SAFEGUARD #03 // LIVE TREASURY</span>
-                <h3 class="font-syne font-bold text-2xl text-ink mb-3">Real-Time Margin &amp; TT Ledger</h3>
-                <p class="text-slateink text-sm leading-relaxed mb-5">Log TT advances, BL releases, and freight costs per deal. Watch your exact realised margin, capital employed, and counterparty aging update live.</p>
-                <div class="font-mono text-xs font-extrabold text-cobalt border-t-2 border-ink pt-3">OUTCOME: 100% REAL-TIME P&amp;L CLARITY</div>
-            </div>
-        </div>
+<!-- ── CTA Band ── -->
+<section class="cta-band">
+  <div style="max-width:600px;margin:0 auto;">
+    <h2>Your trade book belongs in Cargaria</h2>
+    <p>Stop managing commodity trades across emails, chats, and spreadsheets. Get everything in one place — free to start, no credit card required.</p>
+    <div class="cta-actions">
+      <a href="/app" class="btn-cta btn-cta-orange">Create Your Free Account →</a>
+      <a href="/app" class="btn-cta btn-cta-outline">Sign In</a>
     </div>
+  </div>
 </section>
 
-<!-- 6. 4-STAGE DEAL LIFECYCLE REACTOR -->
-<section id="reactor" class="py-20 lg:py-28 bg-paper blueprint-grid border-b-2 border-ink">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-3xl mb-14 reveal">
-            <span class="font-mono text-xs font-extrabold uppercase tracking-widest text-cobalt block mb-2">[02] EXECUTION ENGINE // DEAL LIFECYCLE REACTOR</span>
-            <h2 class="font-syne font-extrabold text-3xl sm:text-5xl uppercase text-ink leading-none mb-4">FROM DEAL TO DELIVERY IN <span class="bg-chartreuse px-2 border-2 border-ink">FOUR LOCKED STEPS.</span></h2>
-            <p class="text-slateink text-base sm:text-lg font-medium">Select any stage to inspect how Cargaria orchestrates a physical shipment — built around the natural rhythm of commodity trade.</p>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <button onclick="selectReactorStage(1)" id="stage-btn-1" class="text-left p-5 bg-chartreuse border-2 border-ink shadow-brutal-ink transition-all cursor-pointer">
-                <div class="flex items-center justify-between font-mono text-xs font-extrabold mb-2"><span class="px-2 py-0.5 bg-ink text-chartreuse">01</span><span>ORIGINATION</span></div>
-                <h3 class="font-syne font-bold text-lg text-ink">Create a Contract</h3>
-                <p class="text-ink/80 text-xs mt-1 font-medium">Log buy/sell counterparty, commodity, volume, pricing &amp; TT terms.</p>
-            </button>
-            <button onclick="selectReactorStage(2)" id="stage-btn-2" class="text-left p-5 bg-alabaster border-2 border-ink hover:bg-sand transition-all cursor-pointer">
-                <div class="flex items-center justify-between font-mono text-xs font-extrabold mb-2"><span class="px-2 py-0.5 bg-ink text-paper">02</span><span class="text-slateink">MARITIME</span></div>
-                <h3 class="font-syne font-bold text-lg text-ink">Add Shipment Lines</h3>
-                <p class="text-slateink text-xs mt-1">Record containers, vessel &amp; free-day countdown automatically.</p>
-            </button>
-            <button onclick="selectReactorStage(3)" id="stage-btn-3" class="text-left p-5 bg-alabaster border-2 border-ink hover:bg-sand transition-all cursor-pointer">
-                <div class="flex items-center justify-between font-mono text-xs font-extrabold mb-2"><span class="px-2 py-0.5 bg-ink text-paper">03</span><span class="text-slateink">TREASURY</span></div>
-                <h3 class="font-syne font-bold text-lg text-ink">Track Payments</h3>
-                <p class="text-slateink text-xs mt-1">Log advances &amp; balances against each contract in real time.</p>
-            </button>
-            <button onclick="selectReactorStage(4)" id="stage-btn-4" class="text-left p-5 bg-alabaster border-2 border-ink hover:bg-sand transition-all cursor-pointer">
-                <div class="flex items-center justify-between font-mono text-xs font-extrabold mb-2"><span class="px-2 py-0.5 bg-ink text-paper">04</span><span class="text-slateink">SETTLEMENT</span></div>
-                <h3 class="font-syne font-bold text-lg text-ink">Close &amp; Report</h3>
-                <p class="text-slateink text-xs mt-1">Realise P&amp;L and export accountant-ready document packs.</p>
-            </button>
-        </div>
-        <div class="bg-alabaster border-2 border-ink shadow-brutal-ink p-6 sm:p-8">
-            <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b-2 border-ink font-mono text-xs">
-                <div class="flex items-center gap-2.5">
-                    <span class="w-3 h-3 bg-orange border border-ink inline-block"></span>
-                    <span class="w-3 h-3 bg-cobalt border border-ink inline-block"></span>
-                    <span class="w-3 h-3 bg-chartreuse border border-ink inline-block"></span>
-                    <span class="font-extrabold text-ink ml-1">CARGARIA TRADE WORKBENCH // DEAL #TRD-904</span>
-                </div>
-                <span id="reactor-badge" class="px-3 py-1 bg-cobalt text-white font-extrabold border border-ink">STAGE 01 // CONTRACT LOCKED</span>
-            </div>
-            <div id="reactor-screen" class="space-y-5"></div>
-            <div class="pt-5 mt-6 border-t-2 border-ink flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-slateink">
-                <span>COMMODITY: <strong class="text-ink">ECUADORIAN TEAK LOGS (420 CBM)</strong></span>
-                <span>INCOTERM: <strong class="text-cobalt">CNF TUTICORIN</strong></span>
-            </div>
-        </div>
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-icon">C</div>
+      <div class="footer-brand-name">Cargaria</div>
+      <p class="footer-tagline">Commodity trade management for independent traders and small brokerages.</p>
     </div>
-</section>
-
-<!-- 7. BENTO ARSENAL -->
-<section id="arsenal" class="py-20 lg:py-28 bg-alabaster border-b-2 border-ink">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-3xl mb-14 reveal">
-            <span class="font-mono text-xs font-extrabold uppercase tracking-widest text-orange block mb-2">[03] CAPABILITY MATRIX // BENTO ARSENAL</span>
-            <h2 class="font-syne font-extrabold text-3xl sm:text-5xl uppercase text-ink leading-none mb-4">EVERYTHING A COMMODITY TRADER <span class="text-cobalt underline decoration-ink decoration-4 underline-offset-8">NEEDS.</span></h2>
-            <p class="text-slateink text-base sm:text-lg font-medium">From contract creation to final TT settlement, Cargaria covers the full physical trade lifecycle — without spreadsheet chaos.</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
-            <!-- P&L Calculator -->
-            <div class="lg:col-span-6 bg-paper border-2 border-ink shadow-brutal-cobalt p-7 flex flex-col justify-between reveal">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="font-mono text-xs font-extrabold text-cobalt uppercase tracking-wider">INTERACTIVE WIDGET // DEAL P&amp;L</span>
-                        <span class="font-mono text-[11px] font-extrabold px-2.5 py-0.5 bg-chartreuse border border-ink text-ink">LIVE CALC</span>
-                    </div>
-                    <h3 class="font-syne font-bold text-2xl text-ink mb-2">Deal Margin &amp; Capital Employed</h3>
-                    <p class="text-slateink text-sm mb-6">Adjust buy price, ocean freight, and sell price to see realised net margin and return on capital update live.</p>
-                </div>
-                <div class="bg-alabaster border-2 border-ink p-4 space-y-4 font-mono text-xs">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div><label class="text-slateink font-bold block mb-1">FOB BUY ($/MT)</label><input type="number" id="calc-buy" value="410" min="50" max="5000" oninput="updateMarginWidget()" class="w-full bg-paper border-2 border-ink px-2.5 py-1.5 font-extrabold text-ink"></div>
-                        <div><label class="text-slateink font-bold block mb-1">FREIGHT ($/MT)</label><input type="number" id="calc-freight" value="55" min="0" max="1000" oninput="updateMarginWidget()" class="w-full bg-paper border-2 border-ink px-2.5 py-1.5 font-extrabold text-ink"></div>
-                        <div><label class="text-slateink font-bold block mb-1">CNF SELL ($/MT)</label><input type="number" id="calc-sell" value="535" min="50" max="6000" oninput="updateMarginWidget()" class="w-full bg-paper border-2 border-ink px-2.5 py-1.5 font-extrabold text-cobalt"></div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-1"><span class="text-ink font-bold">CONTRACT LOT VOLUME:</span><span id="bento-vol-val" class="text-cobalt font-extrabold">500 MT</span></div>
-                        <input type="range" id="bento-vol" min="100" max="2000" step="50" value="500" class="w-full cobalt-slider" oninput="updateMarginWidget()">
-                    </div>
-                    <div class="pt-3 border-t-2 border-ink flex items-center justify-between">
-                        <div><span class="text-slateink font-bold block text-[10px]">REALISED NET PROFIT</span><span id="bento-profit" class="text-2xl sm:text-3xl font-extrabold text-cobalt">$35,000</span></div>
-                        <div class="text-right"><span class="text-slateink font-bold block text-[10px]">DEAL SPREAD / ROI</span><span id="bento-roc" class="text-sm sm:text-base font-extrabold text-ink">$70/MT • 15.1%</span></div>
-                    </div>
-                </div>
-            </div>
-            <!-- Document Vault -->
-            <div class="lg:col-span-6 bg-paper border-2 border-ink shadow-brutal-orange p-7 flex flex-col justify-between reveal">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="font-mono text-xs font-extrabold text-orange uppercase tracking-wider">INTERACTIVE WIDGET // DOC VAULT</span>
-                        <span id="doc-vault-counter" class="font-mono text-[11px] font-extrabold px-2.5 py-0.5 bg-alabaster border border-ink text-ink">4 / 5 VERIFIED</span>
-                    </div>
-                    <h3 class="font-syne font-bold text-2xl text-ink mb-2">Per-Contract Document Vault</h3>
-                    <p class="text-slateink text-sm mb-5">Attach Bills of Lading, Phytosanitary Certs, COO, and Commercial Invoices per shipment. Click any row to verify:</p>
-                </div>
-                <div class="space-y-2 font-mono text-xs" id="doc-checklist">
-                    <button type="button" onclick="toggleDocCheck(this)" data-checked="true" class="w-full flex items-center justify-between p-3 bg-chartreuse/35 border-2 border-ink text-ink text-left transition-all cursor-pointer"><span class="font-bold">[✓] BILL OF LADING (3/3 ORIGINAL SET)</span><span class="px-2 py-0.5 bg-ink text-chartreuse font-bold">VERIFIED</span></button>
-                    <button type="button" onclick="toggleDocCheck(this)" data-checked="true" class="w-full flex items-center justify-between p-3 bg-chartreuse/35 border-2 border-ink text-ink text-left transition-all cursor-pointer"><span class="font-bold">[✓] PHYTOSANITARY CERTIFICATE</span><span class="px-2 py-0.5 bg-ink text-chartreuse font-bold">VERIFIED</span></button>
-                    <button type="button" onclick="toggleDocCheck(this)" data-checked="true" class="w-full flex items-center justify-between p-3 bg-chartreuse/35 border-2 border-ink text-ink text-left transition-all cursor-pointer"><span class="font-bold">[✓] CERTIFICATE OF ORIGIN (COO)</span><span class="px-2 py-0.5 bg-ink text-chartreuse font-bold">VERIFIED</span></button>
-                    <button type="button" onclick="toggleDocCheck(this)" data-checked="true" class="w-full flex items-center justify-between p-3 bg-chartreuse/35 border-2 border-ink text-ink text-left transition-all cursor-pointer"><span class="font-bold">[✓] COMMERCIAL INVOICE</span><span class="px-2 py-0.5 bg-ink text-chartreuse font-bold">VERIFIED</span></button>
-                    <button type="button" onclick="toggleDocCheck(this)" data-checked="false" class="w-full flex items-center justify-between p-3 bg-alabaster border-2 border-orange text-ink text-left transition-all cursor-pointer"><span class="font-bold">[ ] PACKING LIST (CLICK TO ATTACH)</span><span class="px-2 py-0.5 bg-orange text-white font-bold">PENDING</span></button>
-                </div>
-            </div>
-            <div class="lg:col-span-4 bg-paper border-2 border-ink shadow-brutal-ink-sm p-6 reveal">
-                <div class="w-10 h-10 bg-cobalt text-white border-2 border-ink flex items-center justify-center font-mono font-extrabold mb-4">01</div>
-                <h3 class="font-syne font-bold text-xl text-ink mb-2">Counterparty Ledger</h3>
-                <p class="text-slateink text-sm leading-relaxed">Full transaction history and A/R &amp; A/P aging by counterparty. Know your exact net position with every supplier and buyer in seconds.</p>
-            </div>
-            <div class="lg:col-span-4 bg-paper border-2 border-ink shadow-brutal-ink-sm p-6 reveal">
-                <div class="w-10 h-10 bg-orange text-white border-2 border-ink flex items-center justify-center font-mono font-extrabold mb-4">02</div>
-                <h3 class="font-syne font-bold text-xl text-ink mb-2">1-Click Branded Invoices</h3>
-                <p class="text-slateink text-sm leading-relaxed">Generate crisp, branded buyer invoices directly from your contract data and shipment weights in one click. Zero copy-paste or formula errors.</p>
-            </div>
-            <div class="lg:col-span-4 bg-paper border-2 border-ink shadow-brutal-ink-sm p-6 reveal">
-                <div class="w-10 h-10 bg-chartreuse text-ink border-2 border-ink flex items-center justify-center font-mono font-extrabold mb-4">03</div>
-                <h3 class="font-syne font-bold text-xl text-ink mb-2">Multi-User &amp; Company Profile</h3>
-                <p class="text-slateink text-sm leading-relaxed">Invite your ops and finance team, set your company logo and bank details. Invoices and documents print with your branding, not ours.</p>
-            </div>
-        </div>
+    <div>
+      <div class="footer-col-title">Product</div>
+      <ul class="footer-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="/app">Sign In</a></li>
+        <li><a href="/app">Get Started</a></li>
+      </ul>
     </div>
-</section>
-
-<!-- 8. PRICING -->
-<section id="pricing" class="py-20 lg:py-28 bg-paper blueprint-grid border-b-2 border-ink">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto mb-16 reveal">
-            <span class="font-mono text-xs font-extrabold uppercase tracking-widest text-cobalt block mb-2">[04] SIMPLE, HONEST PRICING</span>
-            <h2 class="font-syne font-extrabold text-3xl sm:text-5xl uppercase text-ink leading-none mb-4">START FREE. <span class="bg-chartreuse px-2 border-2 border-ink">SCALE YOUR BOOK.</span></h2>
-            <p class="text-slateink text-base sm:text-lg font-medium">No per-contract fees, ever. No six-month ERP setup retainers.</p>
-        </div>
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
-            <div class="bg-alabaster border-2 border-ink shadow-brutal-ink p-8 flex flex-col justify-between reveal">
-                <div>
-                    <div class="font-mono text-xs font-bold text-slateink uppercase tracking-widest mb-2">SOLO TRADER</div>
-                    <h3 class="font-syne font-extrabold text-2xl text-ink">STARTER</h3>
-                    <div class="mt-4 mb-3 flex items-baseline gap-2"><span class="font-mono font-extrabold text-5xl text-ink">$0</span><span class="font-mono text-xs font-extrabold text-cobalt uppercase">/ FREE FOREVER</span></div>
-                    <p class="text-slateink text-sm mb-6">Everything you need to manage your first trades. No time limit, no credit card.</p>
-                    <ul class="space-y-3 font-mono text-xs border-t-2 border-ink pt-6 mb-8">
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> Unlimited contracts</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> Shipment &amp; payment tracking</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> Detention calculator</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> Reports &amp; P&amp;L</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> 1 user • 50 MB doc storage</li>
-                        <li class="text-slate-400 flex items-center gap-2.5"><span>[✕]</span> Branded document headers</li>
-                        <li class="text-slate-400 flex items-center gap-2.5"><span>[✕]</span> Data export CSV / Excel</li>
-                    </ul>
-                </div>
-                <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="w-full py-4 text-center font-mono text-xs font-extrabold uppercase tracking-wider text-ink bg-paper border-2 border-ink hover:bg-chartreuse transition-all">GET STARTED FREE →</a>
-            </div>
-            <div class="bg-paper border-4 border-cobalt shadow-brutal-orange p-8 flex flex-col justify-between relative lg:-translate-y-3 reveal">
-                <div class="absolute -top-4 left-6 bg-orange text-white font-mono text-xs font-extrabold uppercase tracking-widest px-3.5 py-1 border-2 border-ink">⚡ MOST POPULAR</div>
-                <div>
-                    <div class="font-mono text-xs font-extrabold text-cobalt uppercase tracking-widest mb-2 mt-1">ACTIVE TRADING DESKS</div>
-                    <h3 class="font-syne font-extrabold text-2xl text-ink">GROWTH</h3>
-                    <div class="mt-4 mb-3 flex items-baseline gap-2"><span class="font-mono font-extrabold text-5xl text-ink">$49</span><span class="font-mono text-xs font-bold text-slateink uppercase">/ MONTH</span></div>
-                    <p class="text-slateink text-sm mb-6">For active traders managing multiple deals, shipments, and team members.</p>
-                    <ul class="space-y-3 font-mono text-xs border-t-2 border-ink pt-6 mb-8">
-                        <li class="text-cobalt font-extrabold flex items-center gap-2.5"><span>[✓]</span> Everything in Starter</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> Up to 5 users</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> 2 GB document storage</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> Branded invoices &amp; documents</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> Data export (CSV / Excel)</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> Email payment reminders</li>
-                        <li class="text-slate-400 flex items-center gap-2.5"><span>[✕]</span> Unlimited users</li>
-                    </ul>
-                </div>
-                <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="w-full py-4 text-center font-mono text-xs font-extrabold uppercase tracking-wider bg-cobalt text-white border-2 border-ink shadow-brutal-ink-sm hover:bg-orange transition-all">START FREE TRIAL →</a>
-            </div>
-            <div class="bg-alabaster border-2 border-ink shadow-brutal-ink p-8 flex flex-col justify-between reveal">
-                <div>
-                    <div class="font-mono text-xs font-bold text-slateink uppercase tracking-widest mb-2">TRADING HOUSES</div>
-                    <h3 class="font-syne font-extrabold text-2xl text-ink">BUSINESS</h3>
-                    <div class="mt-4 mb-3 flex items-baseline gap-2"><span class="font-mono font-extrabold text-5xl text-ink">$99</span><span class="font-mono text-xs font-bold text-slateink uppercase">/ MONTH</span></div>
-                    <p class="text-slateink text-sm mb-6">For trading houses running high volumes across multiple global origins.</p>
-                    <ul class="space-y-3 font-mono text-xs border-t-2 border-ink pt-6 mb-8">
-                        <li class="text-cobalt font-extrabold flex items-center gap-2.5"><span>[✓]</span> Everything in Growth</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> Unlimited users</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> 10 GB document storage</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> Priority support</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> Custom onboarding</li>
-                        <li class="text-ink font-bold flex items-center gap-2.5"><span class="text-cobalt font-extrabold">[✓]</span> API access <span class="text-orange">(COMING SOON)</span></li>
-                    </ul>
-                </div>
-                <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="w-full py-4 text-center font-mono text-xs font-extrabold uppercase tracking-wider text-ink bg-paper border-2 border-ink hover:bg-chartreuse transition-all">GET STARTED →</a>
-            </div>
-        </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="about.html">About</a></li>
+      </ul>
     </div>
-</section>
-
-<!-- 9. CLOSING CTA BANNER -->
-<section class="py-20 lg:py-24 bg-chartreuse border-b-2 border-ink">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <span class="inline-block font-mono text-xs font-extrabold uppercase tracking-widest bg-ink text-chartreuse px-3.5 py-1.5 mb-5">READY FOR YOUR NEXT DEAL</span>
-        <h2 class="font-syne font-extrabold text-4xl sm:text-6xl uppercase text-ink leading-[0.98] mb-5">STOP MANAGING TRADES IN SPREADSHEETS.</h2>
-        <p class="text-lg sm:text-xl font-medium text-ink/90 max-w-2xl mx-auto mb-8">Your contracts, shipments, payments and documents — all connected, all current, always at hand.</p>
-        <div class="flex flex-col items-center">
-            <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-9 py-4 bg-orange text-white font-mono text-sm sm:text-base font-extrabold uppercase tracking-wider border-2 border-ink shadow-brutal-ink hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-                <span>START FOR FREE</span><span>→</span>
-            </a>
-            <span class="mt-4 font-mono text-xs font-extrabold uppercase tracking-wider text-ink/80">NO CREDIT CARD • TAKES 2 MINUTES TO SET UP</span>
-        </div>
+    <div>
+      <div class="footer-col-title">Legal</div>
+      <ul class="footer-links">
+        <li><a href="privacy.html">Privacy Policy</a></li>
+      </ul>
     </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="bg-paper py-12 font-mono text-xs text-ink">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b-2 border-ink">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-cobalt flex items-center justify-center border-2 border-ink font-syne font-extrabold text-white text-base">C</div>
-                <span class="font-syne font-extrabold text-lg text-ink">CARGARIA</span>
-            </div>
-            <div class="flex flex-wrap items-center gap-6 font-bold uppercase">
-                <a href="#arsenal" class="hover:text-cobalt transition-colors">Features</a>
-                <a href="#pricing" class="hover:text-cobalt transition-colors">Pricing</a>
-                <button onclick="openDrawer('founder')" class="hover:text-orange transition-colors uppercase cursor-pointer">About</button>
-                <button onclick="openDrawer('privacy')" class="hover:text-orange transition-colors uppercase cursor-pointer">Privacy</button>
-                <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="hover:text-cobalt transition-colors">Sign In</a>
-                <a href="mailto:hello@cargaria.com" class="text-orange font-extrabold hover:underline">hello@cargaria.com</a>
-            </div>
-        </div>
-        <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-slateink font-bold">
-            <p>© 2026 CARGARIA. ALL RIGHTS RESERVED. BUILT FOR COMMODITY TRADERS, BY COMMODITY TRADERS.</p>
-            <p>OPERATED BY SHARABHA INC.</p>
-        </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Cargaria. All rights reserved.</span>
+    <div style="display:flex;gap:16px;">
+      <a href="privacy.html">Privacy</a>
+      <a href="about.html">About</a>
     </div>
+  </div>
 </footer>
 
-<!-- DRAWERS -->
-<div id="drawer-backdrop" onclick="closeDrawer()" class="fixed inset-0 bg-ink/50 backdrop-blur-sm z-50 hidden"></div>
-<aside id="info-drawer" class="fixed top-0 right-0 h-full w-full max-w-2xl bg-paper border-l-4 border-ink z-50 transform translate-x-full transition-transform duration-300 overflow-y-auto p-6 sm:p-10 text-ink">
-    <div class="flex items-center justify-between pb-5 mb-6 border-b-2 border-ink">
-        <span id="drawer-eyebrow" class="font-mono text-xs font-extrabold uppercase tracking-widest px-2.5 py-1 bg-chartreuse border border-ink">TRADING FLOOR ORIGIN</span>
-        <button onclick="closeDrawer()" class="px-3 py-1.5 font-mono text-xs font-extrabold uppercase bg-alabaster border-2 border-ink hover:bg-orange hover:text-white transition-colors cursor-pointer">[ESC / CLOSE ✕]</button>
-    </div>
-    <div id="drawer-content-founder" class="hidden space-y-6 leading-relaxed">
-        <h2 class="font-syne font-extrabold text-3xl sm:text-4xl uppercase text-ink leading-tight">BUILT FROM THE TRADING FLOOR, <span class="text-orange">NOT A STARTUP INCUBATOR.</span></h2>
-        <p class="text-base sm:text-lg text-slateink font-medium">Cargaria was built by a commodity trader who got tired of managing multi-million dollar contracts in spreadsheets. If you've ever lost a detention invoice in an email thread, or calculated your margin in a WhatsApp message, you'll understand why we built this.</p>
-        <div class="bg-alabaster border-2 border-ink shadow-brutal-ink-sm p-5 space-y-2">
-            <h3 class="font-mono text-xs font-extrabold uppercase text-cobalt">THE PROBLEM WE'RE SOLVING</h3>
-            <p class="text-sm text-slateink">Physical commodity trading is complex. You're coordinating suppliers, forwarders, shipping lines, buyers, and banks across multiple time zones — often with nothing but a chain of emails and a shared spreadsheet. When a container goes into detention, you find out when the invoice arrives.</p>
-        </div>
-        <div>
-            <h3 class="font-syne font-bold text-xl text-ink mb-2">Who Built It</h3>
-            <p class="text-sm sm:text-base text-slateink">Cargaria was founded by <strong class="text-ink">Ajit</strong>, a commodity trader with over a decade of experience in agri and forestry commodity trading and as founder of <strong class="text-ink">Sharabha Inc</strong>, a timber trading company sourcing from Latin America and Africa. Every feature exists because we needed it ourselves.</p>
-        </div>
-        <div class="pt-2">
-            <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-6 py-3.5 bg-orange text-white font-mono text-xs font-extrabold uppercase tracking-wider border-2 border-ink shadow-brutal-ink-sm">TRY IT ON YOUR NEXT DEAL →</a>
-        </div>
-    </div>
-    <div id="drawer-content-privacy" class="hidden space-y-5 text-slateink text-sm leading-relaxed">
-        <h2 class="font-syne font-extrabold text-3xl uppercase text-ink">PRIVACY POLICY</h2>
-        <p class="font-mono text-xs font-bold text-cobalt">EFFECTIVE DATE: 1 NOVEMBER 2026 • OPERATED BY SHARABHA INC (USA)</p>
-        <div class="space-y-4">
-            <div class="bg-alabaster border-2 border-ink p-4"><h3 class="font-mono text-xs font-extrabold uppercase text-ink mb-1">1. WHAT WE COLLECT</h3><p>Account data (name, email, company name), business trade data you enter (contracts, shipments, payments, documents), anonymised Google Analytics usage data, and standard technical browser metadata.</p></div>
-            <div class="bg-alabaster border-2 border-ink p-4"><h3 class="font-mono text-xs font-extrabold uppercase text-ink mb-1">2. ZERO DATA SELLING OR AI TRAINING</h3><p class="text-ink font-bold">We do not sell your data. We do not use your business data to train machine learning models.</p></div>
-            <div class="bg-alabaster border-2 border-ink p-4"><h3 class="font-mono text-xs font-extrabold uppercase text-ink mb-1">3. DATA STORAGE &amp; SHARING</h3><p>Your data is stored securely using Supabase on AWS infrastructure in the US. Shared only with Supabase, Google Analytics (anonymised), and payment processors.</p></div>
-            <div class="bg-alabaster border-2 border-ink p-4"><h3 class="font-mono text-xs font-extrabold uppercase text-ink mb-1">4. YOUR RIGHTS &amp; RETENTION</h3><p>You may access, correct, export, or request full deletion of your account data within 30 days at <a href="mailto:privacy@cargaria.com" class="text-orange font-bold underline">privacy@cargaria.com</a>.</p></div>
-        </div>
-    </div>
-</aside>
-
-<!-- JAVASCRIPT ENGINE -->
-<script>
-// 1. 3D TILT
-const tiltZone = document.getElementById('hero-simulator');
-const tiltCard = document.getElementById('detention-bomb-card');
-if (tiltZone && tiltCard) {
-    tiltZone.addEventListener('mousemove', (e) => {
-        const rect = tiltZone.getBoundingClientRect();
-        const rotateX = ((e.clientY - rect.top - rect.height/2) / (rect.height/2)) * -4.5;
-        const rotateY = ((e.clientX - rect.left - rect.width/2) / (rect.width/2)) * 4.5;
-        tiltCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    });
-    tiltZone.addEventListener('mouseleave', () => { tiltCard.style.transform = 'rotateX(0deg) rotateY(0deg)'; });
-}
-
-// 2. DETENTION BOMB SIMULATOR
-let containerCount = 12, isAutoShieldActive = false;
-function adjustContainers(delta) {
-    containerCount = Math.max(2, Math.min(40, containerCount + delta));
-    document.getElementById('bomb-containers-val').textContent = containerCount;
-    updateDetentionBomb();
-}
-function updateDetentionBomb() {
-    const days = parseInt(document.getElementById('bomb-days-slider').value, 10);
-    const rate = parseInt(document.getElementById('bomb-rate-select').value, 10);
-    const totalPenalty = days * containerCount * rate;
-    const dealBaseMargin = 28000;
-    const marginLossPct = Math.min(100, (totalPenalty / dealBaseMargin * 100)).toFixed(1);
-    if (isAutoShieldActive) {
-        document.getElementById('bomb-days-display').textContent = '0 DAYS OVERDUE (SHIELDED)';
-        document.getElementById('bomb-days-display').className = 'text-base sm:text-lg font-extrabold text-cobalt';
-        document.getElementById('bomb-penalty-amount').textContent = '$0';
-        document.getElementById('bomb-margin-impact').textContent = '100% PROTECTED';
-        document.getElementById('bomb-margin-impact').className = 'text-sm font-extrabold text-cobalt';
-    } else {
-        document.getElementById('bomb-days-display').textContent = `${days} DAY${days===1?'':'S'} OVERDUE`;
-        document.getElementById('bomb-days-display').className = days===0 ? 'text-base sm:text-lg font-extrabold text-cobalt' : 'text-base sm:text-lg font-extrabold text-orange';
-        document.getElementById('bomb-penalty-amount').textContent = days===0 ? '$0' : `-$${totalPenalty.toLocaleString()}`;
-        document.getElementById('bomb-margin-impact').textContent = days===0 ? '0% LOST' : `-${marginLossPct}% LOST`;
-        document.getElementById('bomb-margin-impact').className = days===0 ? 'text-sm font-extrabold text-cobalt' : 'text-sm font-extrabold text-orange';
-    }
-}
-function toggleCargariaGuard() {
-    isAutoShieldActive = !isAutoShieldActive;
-    const card = document.getElementById('detention-bomb-card');
-    const hazardBar = document.getElementById('bomb-hazard-bar');
-    if (isAutoShieldActive) {
-        card.classList.replace('shadow-brutal-orange','shadow-brutal-cobalt');
-        hazardBar.classList.replace('hazard-stripes-orange','hazard-stripes-cobalt');
-        document.getElementById('bomb-status-dot').className = 'w-2.5 h-2.5 rounded-full bg-cobalt';
-        document.getElementById('bomb-status-label').textContent = 'CARGARIA AUTO-SHIELD // ACTIVE';
-        document.getElementById('bomb-status-label').className = 'font-mono text-xs font-extrabold uppercase tracking-widest text-cobalt';
-        document.getElementById('bomb-readout-box').className = 'bg-chartreuse/40 border-2 border-ink p-4 mb-5';
-        document.getElementById('bomb-penalty-caption').textContent = 'ALERT SENT 5 DAYS BEFORE FREE-TIME EXPIRY';
-        document.getElementById('bomb-penalty-caption').className = 'font-mono text-[11px] uppercase tracking-wider text-ink font-extrabold';
-        document.getElementById('neutralize-btn').className = 'w-full py-3.5 px-4 font-mono text-xs sm:text-sm font-extrabold uppercase tracking-wider bg-chartreuse text-ink border-2 border-ink shadow-brutal-ink-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2 cursor-pointer';
-        document.getElementById('neutralize-text').textContent = 'SIMULATE UNPROTECTED DELAY AGAIN';
-    } else {
-        card.classList.replace('shadow-brutal-cobalt','shadow-brutal-orange');
-        hazardBar.classList.replace('hazard-stripes-cobalt','hazard-stripes-orange');
-        document.getElementById('bomb-status-dot').className = 'w-2.5 h-2.5 rounded-full bg-orange animate-ping';
-        document.getElementById('bomb-status-label').textContent = 'DETENTION CLOCK // RUNNING';
-        document.getElementById('bomb-status-label').className = 'font-mono text-xs font-extrabold uppercase tracking-widest text-orange';
-        document.getElementById('bomb-readout-box').className = 'bg-orange/10 border-2 border-orange p-4 mb-5';
-        document.getElementById('bomb-penalty-caption').textContent = 'UNPLANNED CARRIER BLEED';
-        document.getElementById('bomb-penalty-caption').className = 'font-mono text-[11px] uppercase tracking-wider text-orange font-extrabold';
-        document.getElementById('neutralize-btn').className = 'w-full py-3.5 px-4 font-mono text-xs sm:text-sm font-extrabold uppercase tracking-wider bg-cobalt text-white border-2 border-ink shadow-brutal-ink-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2 cursor-pointer';
-        document.getElementById('neutralize-text').textContent = 'ACTIVATE CARGARIA AUTO-SHIELD';
-    }
-    updateDetentionBomb();
-}
-
-// 3. GRAVEYARD TOGGLE
-function setOpsMode(mode) {
-    const chaosBtn = document.getElementById('mode-chaos-btn');
-    const osBtn = document.getElementById('mode-os-btn');
-    const chaosView = document.getElementById('ops-chaos-view');
-    const osView = document.getElementById('ops-os-view');
-    if (mode === 'chaos') {
-        chaosBtn.className = 'px-5 py-2.5 font-mono text-xs font-extrabold uppercase tracking-wider bg-orange text-white border border-ink transition-all cursor-pointer';
-        osBtn.className = 'px-5 py-2.5 font-mono text-xs font-extrabold uppercase tracking-wider text-ink hover:bg-chartreuse transition-all cursor-pointer';
-        chaosView.classList.remove('hidden'); chaosView.classList.add('grid');
-        osView.classList.add('hidden'); osView.classList.remove('grid');
-    } else {
-        osBtn.className = 'px-5 py-2.5 font-mono text-xs font-extrabold uppercase tracking-wider bg-cobalt text-white border border-ink transition-all cursor-pointer';
-        chaosBtn.className = 'px-5 py-2.5 font-mono text-xs font-extrabold uppercase tracking-wider text-ink hover:bg-orange hover:text-white transition-all cursor-pointer';
-        osView.classList.remove('hidden'); osView.classList.add('grid');
-        chaosView.classList.add('hidden'); chaosView.classList.remove('grid');
-    }
-}
-
-// 4. REACTOR
-const reactorData = {
-    1: { badge:'STAGE 01 // CONTRACT LOCKED', badgeCls:'px-3 py-1 bg-cobalt text-white font-extrabold border border-ink',
-         html:`<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs"><div class="bg-paper border-2 border-ink p-4"><span class="text-slateink font-bold block mb-1">BUY CONTRACT (ORIGIN)</span><strong class="text-ink text-sm block">MADERAS DEL PACIFICO S.A.</strong><span class="text-slateink block mt-1">420 CBM @ $410/CBM = $172,200</span></div><div class="bg-paper border-2 border-ink p-4"><span class="text-slateink font-bold block mb-1">SELL CONTRACT (BUYER)</span><strong class="text-ink text-sm block">KERALA TIMBER IMPORTS LTD</strong><span class="text-cobalt font-extrabold block mt-1">420 CBM @ $535/CBM = $224,700</span></div></div><div class="bg-paper border-2 border-ink p-4 font-mono text-xs space-y-2"><div class="flex justify-between"><span class="text-slateink font-bold">PAYMENT TERMS:</span><span class="text-ink font-extrabold">20% TT ADVANCE / 80% AGAINST SCAN BL</span></div><div class="flex justify-between"><span class="text-slateink font-bold">OPEN EXPOSURE &amp; SPREAD:</span><span class="px-2 py-0.5 bg-chartreuse border border-ink text-ink font-extrabold">+$52,500.00 (23.3%)</span></div></div>`
-    },
-    2: { badge:'STAGE 02 // MARITIME & SHIPMENT TRACKING', badgeCls:'px-3 py-1 bg-chartreuse text-ink font-extrabold border border-ink',
-         html:`<div class="bg-paper border-2 border-ink p-4 font-mono text-xs space-y-4"><div class="flex flex-wrap justify-between items-center border-b-2 border-ink pb-2.5 gap-2"><span class="text-ink font-extrabold">VESSEL: MSC VALPARAISO // SHIPMENT #09 // 420 CBM</span><span class="px-2 py-0.5 bg-cobalt text-white font-bold">11 FREE DAYS REMAINING</span></div><div><div class="flex justify-between text-[11px] font-bold mb-1"><span>FREE-DAY COUNTDOWN (14 DAYS ALLOCATED)</span><span class="text-cobalt">78% SAFE BUFFER</span></div><div class="w-full h-3.5 bg-alabaster border-2 border-ink overflow-hidden"><div class="bg-chartreuse h-full border-r-2 border-ink" style="width:78%"></div></div></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div class="p-3 bg-alabaster border border-ink"><span class="text-cobalt font-extrabold block">CONT #01 — 40'HC</span><span class="text-slateink">Arrived Tuticorin • Auto-Alert Armed</span></div><div class="p-3 bg-alabaster border border-ink"><span class="text-cobalt font-extrabold block">CONT #02 — 40'HC</span><span class="text-slateink">Arrived Tuticorin • Auto-Alert Armed</span></div></div></div>`
-    },
-    3: { badge:'STAGE 03 // TREASURY & TT PAYMENTS', badgeCls:'px-3 py-1 bg-orange text-white font-extrabold border border-ink',
-         html:`<div class="bg-paper border-2 border-ink p-4 font-mono text-xs space-y-4"><div class="flex flex-wrap justify-between items-center gap-2"><span class="text-ink font-extrabold">BUYER INVOICE #INV-2026-089</span><span class="px-2.5 py-0.5 bg-chartreuse border border-ink text-ink font-extrabold">80% SETTLED</span></div><div class="w-full h-3.5 bg-alabaster border-2 border-ink overflow-hidden"><div class="bg-cobalt h-full border-r-2 border-ink" style="width:80%"></div></div><div class="grid grid-cols-3 gap-2.5 text-center"><div class="p-3 bg-alabaster border-2 border-ink"><span class="text-slateink font-bold block text-[10px]">20% TT ADVANCE</span><strong class="text-cobalt font-extrabold">$44,940 PAID</strong></div><div class="p-3 bg-alabaster border-2 border-ink"><span class="text-slateink font-bold block text-[10px]">1ST BL TRANCHE</span><strong class="text-cobalt font-extrabold">$134,820 PAID</strong></div><div class="p-3 bg-orange/15 border-2 border-orange"><span class="text-ink font-bold block text-[10px]">BALANCE DUE</span><strong class="text-orange font-extrabold">$44,940 OPEN</strong></div></div></div>`
-    },
-    4: { badge:'STAGE 04 // MARGIN & CLOSE', badgeCls:'px-3 py-1 bg-ink text-chartreuse font-extrabold border border-ink',
-         html:`<div class="bg-paper border-2 border-ink p-5 font-mono text-xs space-y-4"><div class="flex flex-wrap justify-between items-center gap-2"><div><span class="text-slateink font-bold block">FINAL REALISED NET P&L</span><span class="text-3xl font-extrabold text-cobalt">+$48,920.00</span></div><div class="text-right"><span class="text-slateink font-bold block">DETENTION INCURRED</span><span class="text-xl font-extrabold text-ink bg-chartreuse px-2 border border-ink">$0.00</span></div></div><div class="border-t-2 border-ink pt-3 flex flex-wrap justify-between gap-2 text-ink font-bold"><span>CAPITAL EMPLOYED: <strong>$127,260</strong></span><span>DEAL CYCLE: <strong class="text-cobalt">38 DAYS</strong></span><span>EXPORT: <strong>CSV / ACCOUNTANT PACK READY</strong></span></div></div>`
-    }
-};
-function selectReactorStage(n) {
-    for (let i=1;i<=4;i++) {
-        document.getElementById(`stage-btn-${i}`).className = i===n
-            ? 'text-left p-5 bg-chartreuse border-2 border-ink shadow-brutal-ink transition-all cursor-pointer'
-            : 'text-left p-5 bg-alabaster border-2 border-ink hover:bg-sand transition-all cursor-pointer';
-    }
-    document.getElementById('reactor-badge').textContent = reactorData[n].badge;
-    document.getElementById('reactor-badge').className = reactorData[n].badgeCls;
-    document.getElementById('reactor-screen').innerHTML = reactorData[n].html;
-}
-
-// 5. BENTO
-function updateMarginWidget() {
-    const buy = parseFloat(document.getElementById('calc-buy').value)||0;
-    const freight = parseFloat(document.getElementById('calc-freight').value)||0;
-    const sell = parseFloat(document.getElementById('calc-sell').value)||0;
-    const vol = parseInt(document.getElementById('bento-vol').value,10);
-    const spread = sell - buy - freight;
-    const totalProfit = Math.round(spread * vol);
-    const roi = (buy+freight)>0 ? (spread/(buy+freight)*100).toFixed(1) : '0.0';
-    document.getElementById('bento-vol-val').textContent = `${vol.toLocaleString()} MT`;
-    const profitEl = document.getElementById('bento-profit');
-    profitEl.textContent = `${totalProfit>=0?'$':'-$'}${Math.abs(totalProfit).toLocaleString()}`;
-    profitEl.className = totalProfit>=0 ? 'text-2xl sm:text-3xl font-extrabold text-cobalt' : 'text-2xl sm:text-3xl font-extrabold text-orange';
-    document.getElementById('bento-roc').textContent = `$${spread.toFixed(0)}/MT • ${roi}% ROI`;
-}
-function toggleDocCheck(btn) {
-    const isChecked = btn.getAttribute('data-checked')==='true';
-    const nextState = !isChecked;
-    btn.setAttribute('data-checked', String(nextState));
-    const rawText = btn.children[0].textContent.replace(/^\[(✓| )\]\s*/,'').replace(' (CLICK TO ATTACH)','');
-    if (nextState) {
-        btn.className='w-full flex items-center justify-between p-3 bg-chartreuse/35 border-2 border-ink text-ink text-left transition-all cursor-pointer';
-        btn.children[0].textContent=`[✓] ${rawText}`;
-        btn.children[1].textContent='VERIFIED';
-        btn.children[1].className='px-2 py-0.5 bg-ink text-chartreuse font-bold';
-    } else {
-        btn.className='w-full flex items-center justify-between p-3 bg-alabaster border-2 border-orange text-ink text-left transition-all cursor-pointer';
-        btn.children[0].textContent=`[ ] ${rawText} (CLICK TO ATTACH)`;
-        btn.children[1].textContent='PENDING';
-        btn.children[1].className='px-2 py-0.5 bg-orange text-white font-bold';
-    }
-    const all = document.querySelectorAll('#doc-checklist button');
-    let v=0; all.forEach(b=>{ if(b.getAttribute('data-checked')==='true') v++; });
-    const counter = document.getElementById('doc-vault-counter');
-    counter.textContent=`${v} / ${all.length} VERIFIED`;
-    counter.className = v===all.length
-        ? 'font-mono text-[11px] font-extrabold px-2.5 py-0.5 bg-chartreuse border border-ink text-ink'
-        : 'font-mono text-[11px] font-extrabold px-2.5 py-0.5 bg-alabaster border border-ink text-ink';
-}
-
-// 6. DRAWERS
-function openDrawer(type) {
-    document.getElementById('drawer-backdrop').classList.remove('hidden');
-    setTimeout(()=>document.getElementById('info-drawer').classList.remove('translate-x-full'),10);
-    document.getElementById('drawer-eyebrow').textContent = type==='founder' ? 'ABOUT CARGARIA // SHARABHA INC' : 'PRIVACY POLICY // DATA GOVERNANCE';
-    document.getElementById('drawer-content-founder').classList.toggle('hidden', type!=='founder');
-    document.getElementById('drawer-content-privacy').classList.toggle('hidden', type!=='privacy');
-}
-function closeDrawer() {
-    document.getElementById('info-drawer').classList.add('translate-x-full');
-    setTimeout(()=>document.getElementById('drawer-backdrop').classList.add('hidden'),280);
-}
-document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeDrawer(); });
-
-// 7. SCROLL REVEAL
-window.addEventListener('DOMContentLoaded',()=>{
-    updateDetentionBomb(); selectReactorStage(1); updateMarginWidget();
-    const obs = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('active');obs.unobserve(e.target);} }); },{threshold:0.1});
-    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-});
-</script>
 </body>
 </html>

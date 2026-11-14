@@ -1,181 +1,343 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy — CARGARIA</title>
-    <meta name="description" content="Cargaria privacy policy — how we collect, use, and protect your trade data. Operated by Sharabha Inc.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — Cargaria</title>
+<!-- GA4 -->
+<script>
+  if (location.hostname !== 'claude.ai') {
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-3B9QWWLGWC';
+    document.head.appendChild(s);
+  }
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-3B9QWWLGWC');
+</script>
+<style>
+:root {
+  --navy:       #0B4F6C;
+  --teal-mid:   #0E6D94;
+  --teal-light: #E0F2F7;
+  --amber:      #F59E0B;
+  --bg:         #F4F8FA;
+  --card:       #fff;
+  --text:       #0F2832;
+  --text2:      #4A6572;
+  --text3:      #8AA4AF;
+  --border:     #D5E5EC;
+  --orange:     #FF4500;
+  --orange-h:   #FF5E1A;
+  --radius:     10px;
+  --shadow:     0 2px 8px rgba(11,79,108,.10);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 15px; color: var(--text);
+  background: #fff; line-height: 1.6;
+}
+a { color: var(--teal-mid); text-decoration: none; }
+a:hover { text-decoration: underline; }
 
-    <!-- GA4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3B9QWWLGWC"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3B9QWWLGWC');</script>
+/* ── Topnav ── */
+.topnav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--navy);
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  padding: 0 24px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-brand-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(255,255,255,.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: #fff;
+}
+.nav-brand-name { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -.2px; }
+.nav-links { display: flex; align-items: center; gap: 6px; }
+.nav-link {
+  font-size: 13px; font-weight: 500; color: rgba(255,255,255,.75);
+  padding: 6px 12px; border-radius: 7px;
+  transition: background .15s, color .15s; text-decoration: none;
+}
+.nav-link:hover { background: rgba(255,255,255,.12); color: #fff; text-decoration: none; }
+.nav-cta {
+  background: var(--orange); color: #fff !important; font-weight: 600;
+  padding: 7px 16px; border-radius: 8px; transition: background .15s; text-decoration: none;
+}
+.nav-cta:hover { background: var(--orange-h); text-decoration: none; }
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; padding: 4px 8px; }
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { display:['Syne','sans-serif'], sans:['Space Grotesk','sans-serif'], mono:['JetBrains Mono','monospace'] },
-                    colors: { alabaster:'#F8F7F4', paper:'#FFFFFF', sand:'#EFECE6', ink:'#0D1117', slateink:'#334155', orange:{DEFAULT:'#FF4500'}, cobalt:{DEFAULT:'#0047FF'}, chartreuse:{DEFAULT:'#D9FF00'} },
-                    boxShadow: { 'brutal-ink':'6px 6px 0px 0px #0D1117', 'brutal-ink-sm':'4px 4px 0px 0px #0D1117' }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { background:#F8F7F4; color:#0D1117; font-family:'Space Grotesk',sans-serif; }
-        h1,h2,h3,.font-syne { font-family:'Syne',sans-serif; letter-spacing:-0.03em; }
-        .blueprint-grid { background-size:44px 44px; background-image:linear-gradient(to right,rgba(13,17,23,0.055) 1px,transparent 1px),linear-gradient(to bottom,rgba(13,17,23,0.055) 1px,transparent 1px); }
-    </style>
+/* ── Page Hero ── */
+.page-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--teal-mid) 100%);
+  padding: 60px 24px 56px; text-align: center;
+}
+.page-hero h1 {
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 800; color: #fff;
+  letter-spacing: -.4px; margin-bottom: 14px;
+}
+.page-hero p { font-size: 15px; color: rgba(255,255,255,.75); max-width: 480px; margin: 0 auto; }
+
+/* ── Layout ── */
+.policy-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+/* ── TOC ── */
+.toc {
+  position: sticky;
+  top: 72px;
+}
+.toc-title {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text3); margin-bottom: 12px;
+}
+.toc-links { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.toc-links a {
+  font-size: 13px; color: var(--text2);
+  padding: 5px 10px; border-radius: 6px;
+  display: block; transition: background .12s, color .12s;
+  text-decoration: none;
+}
+.toc-links a:hover { background: var(--teal-light); color: var(--navy); text-decoration: none; }
+
+/* ── Policy Content ── */
+.policy h2 {
+  font-size: 19px; font-weight: 800; color: var(--text);
+  letter-spacing: -.2px; margin: 40px 0 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.policy h2:first-child { margin-top: 0; border-top: none; }
+
+.policy p {
+  font-size: 14.5px; color: var(--text2);
+  line-height: 1.75; margin-bottom: 14px;
+}
+
+.policy ul {
+  margin: 0 0 14px 20px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.policy ul li {
+  font-size: 14.5px; color: var(--text2); line-height: 1.65;
+}
+
+.policy strong { color: var(--text); font-weight: 600; }
+
+.policy .last-updated {
+  display: inline-block;
+  font-size: 12px; font-weight: 600;
+  color: var(--text3); background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px; padding: 4px 10px;
+  margin-bottom: 28px;
+}
+
+/* ── Footer ── */
+footer {
+  background: var(--navy); color: rgba(255,255,255,.65);
+  padding: 48px 24px 32px;
+}
+.footer-inner {
+  max-width: 920px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px; padding-bottom: 36px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.footer-brand-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: rgba(255,255,255,.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 10px;
+}
+.footer-brand-name { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.footer-tagline { font-size: 12.5px; color: rgba(255,255,255,.5); line-height: 1.6; max-width: 220px; }
+.footer-col-title {
+  font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 14px;
+}
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-links a { font-size: 13px; color: rgba(255,255,255,.65); text-decoration: none; transition: color .15s; }
+.footer-links a:hover { color: #fff; text-decoration: none; }
+.footer-bottom {
+  max-width: 920px; margin: 24px auto 0;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+  font-size: 12px; color: rgba(255,255,255,.4);
+}
+.footer-bottom a { color: rgba(255,255,255,.5); text-decoration: none; }
+.footer-bottom a:hover { color: #fff; text-decoration: none; }
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: block; }
+  .policy-wrap { grid-template-columns: 1fr; gap: 0; padding-top: 40px; }
+  .toc { display: none; }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .footer-inner { grid-template-columns: 1fr; gap: 28px; }
+}
+</style>
 </head>
-<body class="antialiased selection:bg-chartreuse selection:text-ink">
+<body>
 
-<!-- HEADER -->
-<header class="sticky top-0 z-40 bg-alabaster/90 backdrop-blur-md border-b-2 border-ink">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-        <a href="/" class="flex items-center gap-3 group">
-            <div class="w-10 h-10 bg-cobalt flex items-center justify-center border-2 border-ink shadow-brutal-ink-sm group-hover:translate-x-0.5 group-hover:translate-y-0.5 group-hover:shadow-none transition-all">
-                <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 7A8 8 0 1 0 18 17" stroke-linecap="square"/><circle cx="19" cy="12" r="2.2" fill="#D9FF00" stroke="none"/></svg>
-            </div>
-            <div>
-                <span class="font-syne font-extrabold text-xl tracking-tight text-ink block leading-none">CARGARIA</span>
-                <span class="font-mono text-[10px] font-bold text-cobalt tracking-widest uppercase">TRADE COMMAND OS</span>
-            </div>
-        </a>
-        <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="px-5 py-2.5 font-mono text-xs font-extrabold uppercase tracking-wider bg-orange text-white border-2 border-ink shadow-brutal-ink-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all">Start Free →</a>
-    </div>
-</header>
+<nav class="topnav">
+  <a class="nav-brand" href="/">
+    <div class="nav-brand-icon">C</div>
+    <span class="nav-brand-name">Cargaria</span>
+  </a>
+  <div class="nav-links">
+    <a href="/#features" class="nav-link">Features</a>
+    <a href="/#how-it-works" class="nav-link">How it works</a>
+    <a href="about.html" class="nav-link">About</a>
+    <a href="/app" class="nav-link">Sign In</a>
+    <a href="/app" class="nav-cta">Get Started Free</a>
+  </div>
+  <button class="nav-hamburger" aria-label="Menu">☰</button>
+</nav>
 
-<!-- HERO -->
-<section class="blueprint-grid border-b-2 border-ink py-14 lg:py-20">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-paper border-2 border-ink shadow-brutal-ink-sm mb-6 font-mono text-xs font-extrabold uppercase tracking-widest">
-            <span class="w-2 h-2 bg-cobalt"></span>LEGAL // DATA GOVERNANCE
-        </div>
-        <h1 class="font-syne font-extrabold text-4xl sm:text-6xl uppercase text-ink leading-[0.95] mb-5">PRIVACY POLICY</h1>
-        <div class="flex flex-wrap gap-4 font-mono text-xs font-extrabold">
-            <span class="px-3 py-1.5 bg-paper border-2 border-ink">EFFECTIVE: 1 NOVEMBER 2026</span>
-            <span class="px-3 py-1.5 bg-paper border-2 border-ink">OPERATOR: SHARABHA INC (USA)</span>
-            <span class="px-3 py-1.5 bg-chartreuse border-2 border-ink text-ink">ZERO DATA SELLING</span>
-        </div>
-    </div>
+<section class="page-hero">
+  <h1>Privacy Policy</h1>
+  <p>We keep it simple: your trade data is yours. Here's exactly how we handle it.</p>
 </section>
 
-<!-- POLICY CONTENT -->
-<section class="py-14 lg:py-20 bg-paper border-b-2 border-ink">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="space-y-8">
+<div class="policy-wrap">
+  <!-- TOC -->
+  <aside class="toc">
+    <div class="toc-title">On this page</div>
+    <ul class="toc-links">
+      <li><a href="#what-we-collect">What we collect</a></li>
+      <li><a href="#how-we-use">How we use it</a></li>
+      <li><a href="#storage">Storage & security</a></li>
+      <li><a href="#sharing">Sharing</a></li>
+      <li><a href="#cookies">Cookies</a></li>
+      <li><a href="#your-rights">Your rights</a></li>
+      <li><a href="#children">Children</a></li>
+      <li><a href="#changes">Changes</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </aside>
 
-            <!-- Section 1 -->
-            <div class="border-2 border-ink shadow-brutal-ink-sm bg-alabaster">
-                <div class="bg-cobalt text-white px-6 py-3 font-mono text-xs font-extrabold uppercase tracking-widest border-b-2 border-ink">01 // WHAT WE COLLECT</div>
-                <div class="p-6 space-y-4 text-slateink text-sm sm:text-base leading-relaxed font-medium">
-                    <p>We collect only what is necessary to provide and improve the Cargaria service:</p>
-                    <ul class="space-y-2 font-mono text-xs font-bold">
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-cobalt mt-0.5">[→]</span><span><strong class="text-ink">Account data:</strong> Your name, email address, and company name when you register.</span></li>
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-cobalt mt-0.5">[→]</span><span><strong class="text-ink">Business trade data:</strong> Contracts, shipment records, payment logs, and documents you enter into Cargaria.</span></li>
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-cobalt mt-0.5">[→]</span><span><strong class="text-ink">Usage analytics:</strong> Anonymised page-view and feature-use data via Google Analytics 4 (GA4). No personal identifiers are sent to Google.</span></li>
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-cobalt mt-0.5">[→]</span><span><strong class="text-ink">Technical metadata:</strong> Browser type, device type, IP address, and session identifiers for security and debugging.</span></li>
-                    </ul>
-                </div>
-            </div>
+  <!-- Policy body -->
+  <div class="policy">
+    <div class="last-updated">Last updated: November 2026</div>
 
-            <!-- Section 2 -->
-            <div class="border-2 border-ink shadow-brutal-ink-sm bg-alabaster">
-                <div class="bg-orange text-white px-6 py-3 font-mono text-xs font-extrabold uppercase tracking-widest border-b-2 border-ink">02 // HOW WE USE YOUR DATA</div>
-                <div class="p-6 space-y-3 text-slateink text-sm sm:text-base leading-relaxed font-medium">
-                    <p>Your data is used exclusively to:</p>
-                    <ul class="space-y-2 font-mono text-xs font-bold">
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-orange mt-0.5">[✓]</span><span>Provide and operate the Cargaria platform for your account.</span></li>
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-orange mt-0.5">[✓]</span><span>Send transactional emails (account confirmation, payment receipts, password reset).</span></li>
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-orange mt-0.5">[✓]</span><span>Improve the product based on anonymised, aggregate usage patterns.</span></li>
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-orange mt-0.5">[✓]</span><span>Respond to support requests you initiate.</span></li>
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-orange mt-0.5">[✓]</span><span>Comply with applicable law when legally required.</span></li>
-                    </ul>
-                </div>
-            </div>
+    <p>This Privacy Policy describes how Cargaria ("we", "us", or "our") collects, uses, and protects information when you use our trade management platform at <a href="https://cargaria.com">cargaria.com</a>.</p>
 
-            <!-- Section 3 — KEY COMMITMENT -->
-            <div class="border-4 border-ink shadow-brutal-ink bg-chartreuse">
-                <div class="px-6 py-3 font-mono text-xs font-extrabold uppercase tracking-widest border-b-2 border-ink text-ink">03 // OUR CORE COMMITMENT</div>
-                <div class="p-6 space-y-4">
-                    <p class="font-syne font-bold text-xl sm:text-2xl text-ink uppercase leading-tight">We do not sell your data. We do not use your business trade data to train machine learning models. Ever.</p>
-                    <p class="text-ink/80 text-sm font-medium leading-relaxed">Your contracts, shipment records, counterparty names, and payment data belong to you. They exist in Cargaria solely to serve your trading operations — not to inform any third-party system, advertising platform, or AI training pipeline.</p>
-                </div>
-            </div>
+    <h2 id="what-we-collect">1. What we collect</h2>
+    <p>We collect only what's needed to provide the service:</p>
+    <ul>
+      <li><strong>Account information</strong> — your name, email address, and company name when you register.</li>
+      <li><strong>Trade data</strong> — the trades, shipments, documents, counterparties, and payments you enter into Cargaria. This is your operational data and belongs to you.</li>
+      <li><strong>Usage data</strong> — pages visited, features used, and time spent in the app. We use this in aggregate to improve the product.</li>
+      <li><strong>Technical data</strong> — IP address, browser type, device type, and operating system, collected automatically when you access the service.</li>
+    </ul>
 
-            <!-- Section 4 -->
-            <div class="border-2 border-ink shadow-brutal-ink-sm bg-alabaster">
-                <div class="bg-ink text-chartreuse px-6 py-3 font-mono text-xs font-extrabold uppercase tracking-widest border-b-2 border-ink">04 // DATA STORAGE &amp; THIRD PARTIES</div>
-                <div class="p-6 space-y-4 text-slateink text-sm sm:text-base leading-relaxed font-medium">
-                    <p>Your data is stored on <strong class="text-ink">Supabase</strong> infrastructure (AWS, US region), protected by row-level security and encrypted at rest and in transit.</p>
-                    <p>We share data only with the following sub-processors, strictly for service delivery:</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs font-bold">
-                        <div class="p-3 bg-paper border-2 border-ink text-center"><strong class="text-cobalt block mb-1">SUPABASE</strong>Database &amp; Auth infrastructure (AWS US)</div>
-                        <div class="p-3 bg-paper border-2 border-ink text-center"><strong class="text-cobalt block mb-1">GOOGLE ANALYTICS</strong>Anonymised usage analytics only</div>
-                        <div class="p-3 bg-paper border-2 border-ink text-center"><strong class="text-cobalt block mb-1">CLOUDFLARE</strong>CDN, DNS &amp; DDoS protection</div>
-                    </div>
-                    <p>No other third party has access to your account or business data.</p>
-                </div>
-            </div>
+    <h2 id="how-we-use">2. How we use it</h2>
+    <p>We use your information to:</p>
+    <ul>
+      <li>Provide, operate, and improve the Cargaria platform.</li>
+      <li>Send transactional emails — account creation, password resets, and service notices.</li>
+      <li>Understand how the product is used so we can build better features.</li>
+      <li>Comply with legal obligations.</li>
+    </ul>
+    <p>We do not use your trade data for any purpose other than running your workspace. We do not sell it. We do not mine it for insights to sell to third parties.</p>
 
-            <!-- Section 5 -->
-            <div class="border-2 border-ink shadow-brutal-ink-sm bg-alabaster">
-                <div class="bg-cobalt text-white px-6 py-3 font-mono text-xs font-extrabold uppercase tracking-widest border-b-2 border-ink">05 // YOUR RIGHTS &amp; DATA RETENTION</div>
-                <div class="p-6 space-y-4 text-slateink text-sm sm:text-base leading-relaxed font-medium">
-                    <p>You have full control of your data. You may at any time:</p>
-                    <ul class="space-y-2 font-mono text-xs font-bold">
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-cobalt">[→]</span><span><strong class="text-ink">Access:</strong> Export all your account and trade data in CSV format from within the app.</span></li>
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-cobalt">[→]</span><span><strong class="text-ink">Correct:</strong> Edit any data directly in Cargaria.</span></li>
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-cobalt">[→]</span><span><strong class="text-ink">Delete:</strong> Request full account and data deletion within 30 days by emailing <a href="mailto:privacy@cargaria.com" class="text-orange underline">privacy@cargaria.com</a>.</span></li>
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-cobalt">[→]</span><span><strong class="text-ink">Port:</strong> Download your data in machine-readable format at any time.</span></li>
-                    </ul>
-                    <p>We retain account data for as long as your account is active, plus 90 days after account closure for backup and dispute resolution purposes, unless you request earlier deletion.</p>
-                </div>
-            </div>
+    <h2 id="storage">3. Storage & security</h2>
+    <p>Your data is stored on Supabase infrastructure with encryption at rest and in transit. We use industry-standard security practices including HTTPS for all data transmission.</p>
+    <p>No method of storage or transmission is 100% secure. We work hard to protect your data but cannot guarantee absolute security. If you become aware of any security issue, please contact us immediately at <a href="mailto:hello@cargaria.com">hello@cargaria.com</a>.</p>
 
-            <!-- Section 6 -->
-            <div class="border-2 border-ink shadow-brutal-ink-sm bg-alabaster">
-                <div class="bg-orange text-white px-6 py-3 font-mono text-xs font-extrabold uppercase tracking-widest border-b-2 border-ink">06 // COOKIES</div>
-                <div class="p-6 text-slateink text-sm sm:text-base leading-relaxed font-medium space-y-3">
-                    <p>Cargaria uses a minimal set of cookies:</p>
-                    <ul class="space-y-2 font-mono text-xs font-bold">
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-orange">[→]</span><span><strong class="text-ink">Session cookie:</strong> Required for authentication. Deleted when you sign out.</span></li>
-                        <li class="flex items-start gap-3 p-3 bg-paper border border-ink"><span class="text-orange">[→]</span><span><strong class="text-ink">GA4 analytics cookie:</strong> Anonymised usage tracking. No cross-site tracking or advertising profiling.</span></li>
-                    </ul>
-                    <p>We do not use third-party advertising cookies or tracking pixels.</p>
-                </div>
-            </div>
+    <h2 id="sharing">4. Sharing</h2>
+    <p>We do not sell, rent, or share your personal information or trade data with third parties except:</p>
+    <ul>
+      <li><strong>Service providers</strong> — infrastructure and hosting providers (such as Supabase and Cloudflare) who process data on our behalf under strict agreements.</li>
+      <li><strong>Legal requirements</strong> — if required by law, court order, or governmental authority.</li>
+      <li><strong>Business transfer</strong> — in the event of a merger or acquisition, with advance notice to you.</li>
+    </ul>
 
-            <!-- Section 7 -->
-            <div class="border-2 border-ink shadow-brutal-ink-sm bg-alabaster">
-                <div class="bg-ink text-chartreuse px-6 py-3 font-mono text-xs font-extrabold uppercase tracking-widest border-b-2 border-ink">07 // CONTACT &amp; CHANGES</div>
-                <div class="p-6 text-slateink text-sm sm:text-base leading-relaxed font-medium space-y-3">
-                    <p>For any privacy questions or data requests, contact us at: <a href="mailto:privacy@cargaria.com" class="text-orange font-bold underline">privacy@cargaria.com</a></p>
-                    <p>We will notify users by email of any material changes to this policy at least 14 days before they take effect. Continued use of Cargaria after the effective date constitutes acceptance of the revised policy.</p>
-                    <p class="font-mono text-xs font-extrabold text-ink">CARGARIA IS OPERATED BY SHARABHA INC, A US-REGISTERED COMPANY. THIS POLICY IS GOVERNED BY THE LAWS OF THE STATE OF DELAWARE, USA.</p>
-                </div>
-            </div>
+    <h2 id="cookies">5. Cookies</h2>
+    <p>We use a small number of cookies and similar technologies:</p>
+    <ul>
+      <li><strong>Session cookies</strong> — to keep you logged in while you use the app.</li>
+      <li><strong>Analytics cookies</strong> — via Google Analytics 4, to understand aggregate usage patterns. These do not contain your trade data.</li>
+    </ul>
+    <p>You can disable cookies in your browser settings, though some parts of the service may not work correctly without them.</p>
 
-        </div>
+    <h2 id="your-rights">6. Your rights</h2>
+    <p>You have the right to:</p>
+    <ul>
+      <li>Access the personal data we hold about you.</li>
+      <li>Correct inaccurate data.</li>
+      <li>Request deletion of your account and associated data.</li>
+      <li>Export your trade data at any time.</li>
+    </ul>
+    <p>To exercise any of these rights, email us at <a href="mailto:hello@cargaria.com">hello@cargaria.com</a> and we'll respond within 30 days.</p>
+
+    <h2 id="children">7. Children</h2>
+    <p>Cargaria is a business tool intended for adults. We do not knowingly collect data from anyone under 18. If you believe a minor has created an account, please contact us and we will delete it promptly.</p>
+
+    <h2 id="changes">8. Changes to this policy</h2>
+    <p>We may update this policy from time to time. When we do, we'll update the "Last updated" date at the top of this page and, for material changes, notify you by email. Continued use of the service after changes are posted constitutes your acceptance of the revised policy.</p>
+
+    <h2 id="contact">9. Contact</h2>
+    <p>Questions about this policy or how we handle your data? Write to us at <a href="mailto:hello@cargaria.com">hello@cargaria.com</a>. We're a small team and we respond to every message.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-icon">C</div>
+      <div class="footer-brand-name">Cargaria</div>
+      <p class="footer-tagline">Commodity trade management for independent traders and small brokerages.</p>
     </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="bg-paper py-8 font-mono text-xs text-ink border-t-2 border-ink">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <span class="font-syne font-extrabold text-lg">CARGARIA</span>
-        <div class="flex flex-wrap items-center gap-5 font-bold uppercase">
-            <a href="/" class="hover:text-cobalt transition-colors">Home</a>
-            <a href="/about.html" class="hover:text-cobalt transition-colors">About</a>
-            <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="hover:text-orange transition-colors">Sign In</a>
-            <a href="mailto:privacy@cargaria.com" class="text-orange font-extrabold">privacy@cargaria.com</a>
-        </div>
-        <span class="text-slateink font-bold">© 2026 SHARABHA INC.</span>
+    <div>
+      <div class="footer-col-title">Product</div>
+      <ul class="footer-links">
+        <li><a href="/#features">Features</a></li>
+        <li><a href="/#how-it-works">How it works</a></li>
+        <li><a href="/app">Sign In</a></li>
+        <li><a href="/app">Get Started</a></li>
+      </ul>
     </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Legal</div>
+      <ul class="footer-links">
+        <li><a href="privacy.html">Privacy Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Cargaria. All rights reserved.</span>
+    <div style="display:flex;gap:16px;">
+      <a href="privacy.html">Privacy</a>
+      <a href="about.html">About</a>
+    </div>
+  </div>
 </footer>
 
 </body>
