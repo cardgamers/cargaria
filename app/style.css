@@ -200,14 +200,14 @@ button, input, select, textarea {
 }
 
 .btn-cta {
-  background: var(--teal-dark);
+  background: #FF4500;
   color: #fff;
-  border-color: var(--teal-dark);
+  border-color: #FF4500;
 }
 
 .btn-cta:hover {
-  background: var(--teal-mid);
-  border-color: var(--teal-mid);
+  background: #FF5E1A;
+  border-color: #FF5E1A;
 }
 
 .btn-sm {

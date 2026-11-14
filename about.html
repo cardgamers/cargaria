@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — CARGARIA</title>
+    <meta name="description" content="Built by a commodity trader who got tired of managing seven-figure trades in spreadsheets. The story behind Cargaria.">
+
+    <!-- GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3B9QWWLGWC"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3B9QWWLGWC');</script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { display:['Syne','sans-serif'], sans:['Space Grotesk','sans-serif'], mono:['JetBrains Mono','monospace'] },
+                    colors: { alabaster:'#F8F7F4', paper:'#FFFFFF', sand:'#EFECE6', ink:'#0D1117', slateink:'#334155', orange:{DEFAULT:'#FF4500'}, cobalt:{DEFAULT:'#0047FF'}, chartreuse:{DEFAULT:'#D9FF00'} },
+                    boxShadow: { 'brutal-ink':'6px 6px 0px 0px #0D1117', 'brutal-ink-sm':'4px 4px 0px 0px #0D1117', 'brutal-orange':'6px 6px 0px 0px #FF4500', 'brutal-cobalt':'6px 6px 0px 0px #0047FF' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background:#F8F7F4; color:#0D1117; font-family:'Space Grotesk',sans-serif; }
+        h1,h2,h3,.font-syne { font-family:'Syne',sans-serif; letter-spacing:-0.03em; }
+        .blueprint-grid { background-size:44px 44px; background-image:linear-gradient(to right,rgba(13,17,23,0.055) 1px,transparent 1px),linear-gradient(to bottom,rgba(13,17,23,0.055) 1px,transparent 1px); }
+        .reveal { opacity:0; transform:translateY(20px); transition:opacity 0.6s cubic-bezier(0.16,1,0.3,1),transform 0.6s cubic-bezier(0.16,1,0.3,1); }
+        .reveal.active { opacity:1; transform:translateY(0); }
+    </style>
+</head>
+<body class="antialiased selection:bg-chartreuse selection:text-ink">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-40 bg-alabaster/90 backdrop-blur-md border-b-2 border-ink">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 bg-cobalt flex items-center justify-center border-2 border-ink shadow-brutal-ink-sm group-hover:translate-x-0.5 group-hover:translate-y-0.5 group-hover:shadow-none transition-all">
+                <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 7A8 8 0 1 0 18 17" stroke-linecap="square"/><circle cx="19" cy="12" r="2.2" fill="#D9FF00" stroke="none"/></svg>
+            </div>
+            <div>
+                <span class="font-syne font-extrabold text-xl tracking-tight text-ink block leading-none">CARGARIA</span>
+                <span class="font-mono text-[10px] font-bold text-cobalt tracking-widest uppercase">TRADE COMMAND OS</span>
+            </div>
+        </a>
+        <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="px-5 py-2.5 font-mono text-xs font-extrabold uppercase tracking-wider bg-orange text-white border-2 border-ink shadow-brutal-ink-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all">Start Free →</a>
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="blueprint-grid border-b-2 border-ink py-16 lg:py-24">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-paper border-2 border-ink shadow-brutal-ink-sm mb-6 font-mono text-xs font-extrabold uppercase tracking-widest">
+            <span class="w-2 h-2 bg-orange animate-pulse"></span>ABOUT CARGARIA
+        </div>
+        <h1 class="font-syne font-extrabold text-4xl sm:text-6xl xl:text-7xl uppercase text-ink leading-[0.95] mb-6">
+            BUILT FROM THE<br>TRADING FLOOR,<br><span class="text-orange">NOT A STARTUP<br>INCUBATOR.</span>
+        </h1>
+        <p class="text-lg sm:text-xl text-slateink max-w-2xl font-medium leading-relaxed">
+            Cargaria was built by a commodity trader who got tired of managing seven-figure physical trades across fragile spreadsheets and buried WhatsApp threads.
+        </p>
+    </div>
+</section>
+
+<!-- FOUNDER STORY -->
+<section class="py-16 lg:py-24 bg-paper border-b-2 border-ink">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div class="lg:col-span-7 space-y-6 reveal">
+                <span class="font-mono text-xs font-extrabold uppercase tracking-widest text-cobalt">[01] THE ORIGIN STORY</span>
+                <h2 class="font-syne font-extrabold text-3xl sm:text-4xl uppercase text-ink leading-tight">Why We Built This</h2>
+                <div class="space-y-5 text-base sm:text-lg text-slateink leading-relaxed font-medium">
+                    <p>Physical commodity trading is operationally complex. You're coordinating suppliers, forwarders, shipping lines, buyers, and banks across multiple time zones — managing contracts worth hundreds of thousands of dollars with nothing but a chain of emails and a shared spreadsheet.</p>
+                    <p>When a container goes into detention, you typically find out when the invoice arrives. When a TT advance is overdue, you're chasing WhatsApp messages across time zones. When your accountant asks for the quarter's P&L, you're stitching together data from three different tools.</p>
+                    <p><strong class="text-ink">Cargaria exists because we lived that problem for years and decided to solve it properly.</strong></p>
+                </div>
+            </div>
+            <div class="lg:col-span-5 reveal">
+                <div class="bg-alabaster border-2 border-ink shadow-brutal-orange p-7 space-y-5">
+                    <div class="h-2 w-full bg-orange border border-ink"></div>
+                    <span class="font-mono text-xs font-extrabold uppercase tracking-widest text-orange">FOUNDER // AJIT</span>
+                    <h3 class="font-syne font-bold text-2xl text-ink">12 Years of Physical Commodity Trading</h3>
+                    <div class="space-y-3 font-mono text-xs font-bold text-ink">
+                        <div class="flex items-center gap-3 p-2.5 bg-paper border border-ink">
+                            <span class="w-2 h-2 bg-cobalt flex-shrink-0"></span>
+                            <span>Olam International — Agri-commodity trading</span>
+                        </div>
+                        <div class="flex items-center gap-3 p-2.5 bg-paper border border-ink">
+                            <span class="w-2 h-2 bg-cobalt flex-shrink-0"></span>
+                            <span>Sharabha Inc — Timber trading, Latin America &amp; Africa → India</span>
+                        </div>
+                        <div class="flex items-center gap-3 p-2.5 bg-paper border border-ink">
+                            <span class="w-2 h-2 bg-orange flex-shrink-0"></span>
+                            <span>Commodities: Teak logs, hardwoods, agri softs</span>
+                        </div>
+                        <div class="flex items-center gap-3 p-2.5 bg-paper border border-ink">
+                            <span class="w-2 h-2 bg-chartreuse border border-ink flex-shrink-0"></span>
+                            <span>Routes: Ecuador, Colombia, Benin, Tanzania → India CNF</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WHAT WE'RE SOLVING -->
+<section class="py-16 lg:py-24 bg-alabaster blueprint-grid border-b-2 border-ink">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-12 reveal">
+            <span class="font-mono text-xs font-extrabold uppercase tracking-widest text-orange block mb-2">[02] THE PROBLEM</span>
+            <h2 class="font-syne font-extrabold text-3xl sm:text-4xl uppercase text-ink leading-tight">Every Feature Exists Because <span class="bg-chartreuse px-2 border-2 border-ink">We Needed It.</span></h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-paper border-2 border-ink shadow-brutal-ink-sm p-6 reveal">
+                <div class="font-mono text-xs font-extrabold px-2.5 py-1 bg-orange text-white inline-block mb-4">PAIN #01</div>
+                <h3 class="font-syne font-bold text-xl text-ink mb-3">Detention Blindness</h3>
+                <p class="text-slateink text-sm leading-relaxed">Free days tracked in a PDF. Arrival dates buried in a forwarder's email. The only alert was a $6,000 invoice arriving 2 weeks after containers breached free time.</p>
+            </div>
+            <div class="bg-paper border-2 border-ink shadow-brutal-ink-sm p-6 reveal">
+                <div class="font-mono text-xs font-extrabold px-2.5 py-1 bg-orange text-white inline-block mb-4">PAIN #02</div>
+                <h3 class="font-syne font-bold text-xl text-ink mb-3">Document Chaos</h3>
+                <p class="text-slateink text-sm leading-relaxed">"Which version of the BL is the final one?" "Who has the original Phytosanitary cert?" Documents scattered across email threads, WhatsApp, and shared drives with no single source of truth.</p>
+            </div>
+            <div class="bg-paper border-2 border-ink shadow-brutal-ink-sm p-6 reveal">
+                <div class="font-mono text-xs font-extrabold px-2.5 py-1 bg-orange text-white inline-block mb-4">PAIN #03</div>
+                <h3 class="font-syne font-bold text-xl text-ink mb-3">Phantom P&amp;L</h3>
+                <p class="text-slateink text-sm leading-relaxed">Quarter-end reconciliation meant manually re-tracing every cost: freight adjustments, survey fees, detention charges not yet invoiced. Real margins only visible weeks after the deal closed.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- COMPANY -->
+<section class="py-16 lg:py-24 bg-paper border-b-2 border-ink">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center reveal">
+            <div class="space-y-5">
+                <span class="font-mono text-xs font-extrabold uppercase tracking-widest text-cobalt">[03] THE COMPANY</span>
+                <h2 class="font-syne font-extrabold text-3xl sm:text-4xl uppercase text-ink leading-tight">Operated by Sharabha Inc.</h2>
+                <p class="text-slateink text-base leading-relaxed font-medium">Sharabha Inc is a US-registered commodity trading company specialising in plantation teak and tropical hardwood logs sourced from Latin America and Africa for Indian importers.</p>
+                <p class="text-slateink text-base leading-relaxed font-medium">Cargaria is the internal trade management system we built for ourselves — now available to every physical commodity trading desk that faces the same operational challenges.</p>
+                <div class="pt-2">
+                    <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-6 py-3.5 bg-orange text-white font-mono text-xs font-extrabold uppercase tracking-wider border-2 border-ink shadow-brutal-ink-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all">TRY IT ON YOUR NEXT DEAL →</a>
+                </div>
+            </div>
+            <div class="bg-alabaster border-2 border-ink shadow-brutal-cobalt p-7 font-mono text-xs space-y-3">
+                <div class="font-extrabold text-cobalt uppercase tracking-widest mb-4">SHARABHA INC // COMPANY PROFILE</div>
+                <div class="flex justify-between border-b border-ink pb-2"><span class="text-slateink font-bold">INCORPORATED</span><span class="text-ink font-extrabold">USA (DELAWARE)</span></div>
+                <div class="flex justify-between border-b border-ink pb-2"><span class="text-slateink font-bold">OPERATIONS</span><span class="text-ink font-extrabold">CHENNAI, INDIA</span></div>
+                <div class="flex justify-between border-b border-ink pb-2"><span class="text-slateink font-bold">COMMODITY FOCUS</span><span class="text-ink font-extrabold">TIMBER &amp; HARDWOODS</span></div>
+                <div class="flex justify-between border-b border-ink pb-2"><span class="text-slateink font-bold">ORIGINS</span><span class="text-ink font-extrabold">LATAM + AFRICA</span></div>
+                <div class="flex justify-between border-b border-ink pb-2"><span class="text-slateink font-bold">MARKETS</span><span class="text-ink font-extrabold">INDIA (CNF)</span></div>
+                <div class="flex justify-between pt-1"><span class="text-slateink font-bold">CONTACT</span><span class="text-orange font-extrabold">hello@cargaria.com</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-16 lg:py-20 bg-chartreuse border-b-2 border-ink">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="font-syne font-extrabold text-3xl sm:text-5xl uppercase text-ink leading-tight mb-4">READY TO COMMAND YOUR TRADES?</h2>
+        <p class="text-lg font-medium text-ink/80 mb-8">Start free. No credit card. Live in 2 minutes.</p>
+        <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-orange text-white font-mono text-sm font-extrabold uppercase tracking-wider border-2 border-ink shadow-brutal-ink hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">START FOR FREE →</a>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-paper py-8 font-mono text-xs text-ink border-t-2 border-ink">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <span class="font-syne font-extrabold text-lg">CARGARIA</span>
+        <div class="flex flex-wrap items-center gap-5 font-bold uppercase">
+            <a href="/" class="hover:text-cobalt transition-colors">Home</a>
+            <a href="/privacy.html" class="hover:text-cobalt transition-colors">Privacy</a>
+            <a href="https://cargaria.com/app/" target="_blank" rel="noopener" class="hover:text-orange transition-colors">Sign In</a>
+            <a href="mailto:hello@cargaria.com" class="text-orange font-extrabold">hello@cargaria.com</a>
+        </div>
+        <span class="text-slateink font-bold">© 2026 SHARABHA INC.</span>
+    </div>
+</footer>
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+    const obs = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('active');obs.unobserve(e.target);} }); },{threshold:0.1});
+    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+});
+</script>
+</body>
+</html>
