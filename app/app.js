@@ -222,8 +222,8 @@ function buildSidebar() {
       <div style="display:flex;align-items:center;gap:10px;padding:10px 16px">
         ${logoHtml}
         <div style="overflow:hidden">
-          <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${co?.name || 'Cargaria'}</div>
-          <div style="font-size:11px;color:var(--text3);text-transform:capitalize">${S.role || 'admin'}</div>
+          <div style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${co?.name || 'Cargaria'}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.6);text-transform:capitalize">${S.role || 'admin'}</div>
         </div>
       </div>`;
   }
