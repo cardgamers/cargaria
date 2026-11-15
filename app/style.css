@@ -484,7 +484,7 @@ button, input, select, textarea {
   padding: 8px 10px;
   border-radius: 8px;
   cursor: pointer;
-  color: rgba(255,255,255,.7);
+  color: rgba(255,255,255,.85);
   font-size: 13.5px;
   font-weight: 500;
   transition: background .15s, color .15s;
@@ -493,17 +493,18 @@ button, input, select, textarea {
 }
 
 .nav-item:hover {
-  background: rgba(255,255,255,.1);
+  background: rgba(255,255,255,.15);
   color: #fff;
 }
 
 .nav-item.active {
-  background: rgba(255,255,255,.18);
+  background: rgba(255,255,255,.22);
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: inset 3px 0 0 #FF4500;
 }
 
-.nav-icon { font-size: 15px; flex-shrink: 0; display: flex; align-items: center; opacity: 0.8; }
+.nav-icon { font-size: 15px; flex-shrink: 0; display: flex; align-items: center; opacity: 0.75; }
 .nav-item.active .nav-icon, .nav-item:hover .nav-icon { opacity: 1; }
 
 .sidebar-footer {
