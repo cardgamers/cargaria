@@ -26,52 +26,80 @@
      AUTH SCREEN
 ══════════════════════════════════════════ -->
 <div id="auth-screen" class="auth-screen">
-  <div class="auth-card">
-    <div class="auth-brand">
-      <div class="auth-logo"><img src="/icons/icon-192.png" alt="Cargaria" style="width:56px;height:56px;border-radius:12px"></div>
-      <div class="auth-name">Cargaria</div>
-      <div class="auth-tagline">Commodity Trade Management</div>
-    </div>
 
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="auth-tab-login" onclick="showAuthTab('login')">Sign In</button>
-      <button class="auth-tab" id="auth-tab-signup" onclick="showAuthTab('signup')">Create Account</button>
+  <!-- Left branding panel -->
+  <div class="auth-panel-left">
+    <div class="auth-brand-mark">
+      <div class="auth-brand-icon">🚢</div>
+      <div class="auth-brand-name-text">Cargaria</div>
     </div>
-
-    <!-- Login -->
-    <div class="auth-tab-content active" id="auth-login">
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="login-email" placeholder="you@company.com" autocomplete="email">
+    <div class="auth-left-headline">Trade smarter.<br>Ship confidently.</div>
+    <div class="auth-left-sub">The end-to-end platform for commodity traders — from contract to cash, in one place.</div>
+    <div class="auth-left-features">
+      <div class="auth-feature-item">
+        <div class="auth-feature-dot">📋</div>
+        <div class="auth-feature-text">Contracts, shipments & documents in one view</div>
       </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"
-          onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="auth-feature-item">
+        <div class="auth-feature-dot">💳</div>
+        <div class="auth-feature-text">Track payments, LC terms & open balances</div>
       </div>
-      <div id="login-err" class="form-error"></div>
-      <button class="btn btn-cta auth-submit" id="login-btn" onclick="doLogin()">Sign In</button>
-    </div>
-
-    <!-- Signup -->
-    <div class="auth-tab-content" id="auth-signup">
-      <div class="form-group">
-        <label>Your Name</label>
-        <input type="text" id="signup-name" placeholder="John Smith" autocomplete="name">
+      <div class="auth-feature-item">
+        <div class="auth-feature-dot">📊</div>
+        <div class="auth-feature-text">P&amp;L and trade analytics across commodities</div>
       </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="signup-email" placeholder="you@company.com" autocomplete="email">
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="signup-pass" placeholder="Min 6 characters" autocomplete="new-password"
-          onkeydown="if(event.key==='Enter')doSignup()">
-      </div>
-      <div id="signup-err" class="form-error"></div>
-      <button class="btn btn-cta auth-submit" id="signup-btn" onclick="doSignup()">Create Account</button>
     </div>
   </div>
+
+  <!-- Right form panel -->
+  <div class="auth-panel-right">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="auth-name">Welcome back</div>
+        <div class="auth-tagline">Sign in to your Cargaria account</div>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="auth-tab-login" onclick="showAuthTab('login')">Sign In</button>
+        <button class="auth-tab" id="auth-tab-signup" onclick="showAuthTab('signup')">Create Account</button>
+      </div>
+
+      <!-- Login -->
+      <div class="auth-tab-content active" id="auth-login">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="you@company.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"
+            onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div id="login-err" class="form-error"></div>
+        <button class="btn btn-cta auth-submit" id="login-btn" onclick="doLogin()">Sign In</button>
+      </div>
+
+      <!-- Signup -->
+      <div class="auth-tab-content" id="auth-signup">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="signup-name" placeholder="John Smith" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="signup-email" placeholder="you@company.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="signup-pass" placeholder="Min 6 characters" autocomplete="new-password"
+            onkeydown="if(event.key==='Enter')doSignup()">
+        </div>
+        <div id="signup-err" class="form-error"></div>
+        <button class="btn btn-cta auth-submit" id="signup-btn" onclick="doSignup()">Create Account</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ══════════════════════════════════════════

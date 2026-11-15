@@ -50,52 +50,140 @@ button, input, select, textarea {
 /* ── Auth Screen ── */
 #auth-screen {
   display: flex;
-  align-items: center;
-  justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0B4F6C 0%, #0E6D94 100%);
-  padding: 20px;
-}
-
-.auth-card {
   background: #fff;
-  border-radius: 16px;
-  padding: 40px;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.2);
 }
 
-.auth-logo {
-  text-align: center;
-  margin-bottom: 28px;
+/* Left branding panel */
+.auth-panel-left {
+  flex: 1;
+  background: linear-gradient(150deg, #0B4F6C 0%, #0E6D94 60%, #1A8FA8 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 56px;
+  position: relative;
+  overflow: hidden;
 }
 
-.auth-logo-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, var(--teal-dark), var(--teal-mid));
+.auth-panel-left::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='600' height='600' viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1.2' opacity='0.07'%3E%3Ccircle cx='300' cy='300' r='200'/%3E%3Ccircle cx='300' cy='300' r='280'/%3E%3Ccircle cx='300' cy='300' r='120'/%3E%3Cline x1='100' y1='300' x2='500' y2='300'/%3E%3Cline x1='300' y1='100' x2='300' y2='500'/%3E%3Cline x1='159' y1='159' x2='441' y2='441'/%3E%3Cline x1='441' y1='159' x2='159' y2='441'/%3E%3C/g%3E%3C/svg%3E") center/cover no-repeat;
+  pointer-events: none;
+}
+
+.auth-brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 56px;
+  position: relative;
+}
+
+.auth-brand-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  background: rgba(255,255,255,.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 10px;
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 800;
   color: #fff;
+  border: 1px solid rgba(255,255,255,.25);
 }
 
-.auth-logo h1 {
-  font-size: 22px;
+.auth-brand-name-text {
+  font-size: 20px;
   font-weight: 700;
-  color: var(--text);
+  color: #fff;
   letter-spacing: -.3px;
 }
 
-.auth-logo p {
+.auth-left-headline {
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.5px;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.auth-left-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,.75);
+  line-height: 1.7;
+  max-width: 340px;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+.auth-left-features {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+}
+
+.auth-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.auth-feature-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.auth-feature-text {
+  font-size: 13.5px;
+  color: rgba(255,255,255,.85);
+  font-weight: 500;
+}
+
+/* Right form panel */
+.auth-panel-right {
+  width: 440px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 48px;
+  background: #fff;
+}
+
+.auth-card {
+  width: 100%;
+}
+
+.auth-brand {
+  margin-bottom: 28px;
+}
+
+.auth-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.3px;
+  margin-bottom: 4px;
+}
+
+.auth-tagline {
   font-size: 13px;
   color: var(--text2);
-  margin-top: 4px;
 }
 
 .auth-tabs {
@@ -128,6 +216,27 @@ button, input, select, textarea {
 
 .auth-tab-content { display: none; }
 .auth-tab-content.active { display: block; }
+
+.auth-submit {
+  width: 100%;
+  justify-content: center;
+  padding: 11px;
+  font-size: 15px;
+  margin-top: 4px;
+}
+
+/* Mobile: stack vertically, hide left panel */
+@media (max-width: 768px) {
+  #auth-screen { flex-direction: column; }
+  .auth-panel-left { display: none; }
+  .auth-panel-right {
+    width: 100%;
+    padding: 40px 24px;
+    min-height: 100vh;
+    align-items: flex-start;
+    padding-top: 60px;
+  }
+}
 
 /* ── Form Elements ── */
 .form-group {
