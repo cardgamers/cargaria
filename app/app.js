@@ -176,6 +176,10 @@ async function refreshContracts() {
     .select('*')
     .order('created_at', { ascending: false });
   S.contracts = data || [];
+  // Re-render dashboard alerts if dashboard is currently active
+  if (S.currentPage === 'dashboard') {
+    dashboard();
+  }
 }
 
 /* ── Navigation ── */
@@ -230,6 +234,7 @@ function buildSidebar() {
 }
 
 function nav(section) {
+  S.currentPage = section;
   // Update active state
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   const activeEl = document.getElementById('nav-' + section);
