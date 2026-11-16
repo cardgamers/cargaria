@@ -127,7 +127,7 @@ function getPrintHeader(title) {
     ? `<img src="${co.logo_url}" style="height:40px;object-fit:contain">`
     : `<div style="width:40px;height:40px;border-radius:8px;background:var(--teal-dark);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff">${(co?.name||'C').substring(0,1)}</div>`;
   return `
-    <div class="print-header" style="display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:2px solid #000;margin-bottom:16px">
+    <div class="print-header" style="align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:2px solid #000;margin-bottom:16px">
       <div style="display:flex;align-items:center;gap:12px">
         ${logoHtml}
         <div>

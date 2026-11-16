@@ -1280,10 +1280,16 @@ async function saveEditContract(id) {
 function printContract(contractNumber, product) {
   const headerEl = document.getElementById('contract-print-header');
   if (headerEl) headerEl.innerHTML = getPrintHeader('Contract ' + contractNumber + ' — ' + product);
+  const modalBody = document.querySelector('.modal-body');
+  if (modalBody) modalBody.scrollTop = 0;
+  const modalRoot = document.getElementById('modal-root');
+  if (modalRoot) modalRoot.scrollTop = 0;
   const orig = document.title;
   document.title = contractNumber + ' — ' + product;
-  window.print();
-  document.title = orig;
+  setTimeout(() => {
+    window.print();
+    document.title = orig;
+  }, 100);
 }
 
 function printCostSheet(contractId) {
