@@ -952,6 +952,83 @@ tbody tr.clickable:hover {
 }
 
 /* ── Print Styles ── */
+/* ── Welcome Bar ── */
+.welcome-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.welcome-greeting {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.3px;
+}
+.welcome-date {
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: 2px;
+}
+
+/* ── Market Widgets ── */
+.market-widgets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+@media (max-width: 900px) {
+  .market-widgets { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 500px) {
+  .market-widgets { grid-template-columns: 1fr; }
+}
+.market-widget {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+.market-widget.mw-link {
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+}
+.market-widget.mw-link:hover {
+  border-color: var(--teal-mid);
+  box-shadow: 0 2px 10px rgba(14,109,148,.12);
+}
+.mw-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text2);
+  margin-bottom: 6px;
+}
+.mw-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.5px;
+  margin-bottom: 4px;
+}
+.mw-sub {
+  font-size: 11px;
+  color: var(--text2);
+}
+.mw-loading {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text2);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .4; }
+}
+
 @media print {
   /* Hide everything except the modal */
   #app-shell, #auth-screen, #onboarding-screen { display: none !important; }

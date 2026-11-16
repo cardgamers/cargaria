@@ -6,6 +6,9 @@ function dashboard() {
   document.getElementById('page-title').textContent = 'Dashboard';
   document.getElementById('topbar-actions').innerHTML = '';
 
+  // Fetch market widgets async (non-blocking)
+  _fetchMarketWidgets();
+
   const cs = S.contracts || [];
   const active = cs.filter(c => ['open','shipped','arrived'].includes(c.status));
 
@@ -29,6 +32,38 @@ function dashboard() {
   });
 
   setContent(`
+    <!-- Welcome Bar -->
+    <div class="welcome-bar">
+      <div>
+        <div class="welcome-greeting" id="welcome-greeting">Good morning</div>
+        <div class="welcome-date" id="welcome-date"></div>
+      </div>
+    </div>
+
+    <!-- Market Widgets -->
+    <div class="market-widgets" id="market-widgets">
+      <div class="market-widget" id="mw-usdinr">
+        <div class="mw-label">USD / INR</div>
+        <div class="mw-value" id="mw-usdinr-val"><span class="mw-loading">Loading…</span></div>
+        <div class="mw-sub" id="mw-usdinr-sub">Live rate</div>
+      </div>
+      <div class="market-widget mw-link" onclick="window.open('https://www.balticexchange.com/en/data/indices/bdi.html','_blank')">
+        <div class="mw-label">Baltic Dry Index</div>
+        <div class="mw-value" id="mw-bdi-val"><span class="mw-loading">—</span></div>
+        <div class="mw-sub">Click for live chart ↗</div>
+      </div>
+      <div class="market-widget mw-link" onclick="window.open('https://fbx.freightos.com/','_blank')">
+        <div class="mw-label">Freightos FBX</div>
+        <div class="mw-value" id="mw-fbx-val"><span class="mw-loading">—</span></div>
+        <div class="mw-sub">Container index ↗</div>
+      </div>
+      <div class="market-widget mw-link" onclick="window.open('https://www.indexmundi.com/commodities/?commodity=sawnwood&months=60','_blank')">
+        <div class="mw-label">Sawnwood Price</div>
+        <div class="mw-value">Index</div>
+        <div class="mw-sub">World Bank · Click ↗</div>
+      </div>
+    </div>
+
     <!-- Payment Alerts -->
     <div id="payment-alerts-banner"></div>
 
@@ -240,4 +275,41 @@ function showDashDetail(type) {
 
   panel.innerHTML = html;
   panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+
+/* ── Dashboard: welcome bar + market widgets ── */
+function _dashGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function _dashDate() {
+  return new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+}
+
+async function _fetchMarketWidgets() {
+  // Set greeting + date
+  const gr = document.getElementById('welcome-greeting');
+  const dt = document.getElementById('welcome-date');
+  if (gr) gr.textContent = _dashGreeting() + (S.userRecord?.name ? ', ' + S.userRecord.name.split(' ')[0] : '');
+  if (dt) dt.textContent = _dashDate();
+
+  // USD/INR — free public API
+  try {
+    const r = await fetch('https://api.frankfurter.app/latest?from=USD&to=INR');
+    const d = await r.json();
+    const rate = d?.rates?.INR;
+    const el = document.getElementById('mw-usdinr-val');
+    const sub = document.getElementById('mw-usdinr-sub');
+    if (el && rate) {
+      el.textContent = '₹ ' + rate.toFixed(2);
+      if (sub) sub.textContent = 'As of today';
+    }
+  } catch(e) {
+    const el = document.getElementById('mw-usdinr-val');
+    if (el) el.innerHTML = '<span class="mw-loading">Unavailable</span>';
+  }
 }
