@@ -3,11 +3,8 @@
    ═══════════════════════════════════════════════════════ */
 
 function dashboard() {
-  document.getElementById('page-title').textContent = '';
+  document.getElementById('page-title').textContent = 'Dashboard';
   document.getElementById('topbar-actions').innerHTML = '';
-
-  // Fetch market widgets async (non-blocking)
-  _fetchMarketWidgets();
 
   const cs = S.contracts || [];
   const active = cs.filter(c => ['open','shipped','arrived'].includes(c.status));
@@ -32,44 +29,6 @@ function dashboard() {
   });
 
   setContent(`
-    <!-- Welcome Bar -->
-    <div class="welcome-bar">
-      <div>
-        <div class="welcome-greeting" id="welcome-greeting">Good morning</div>
-        <div class="welcome-date" id="welcome-date"></div>
-      </div>
-    </div>
-
-    <!-- Market Widgets -->
-    <div class="market-widgets" id="market-widgets">
-      <div class="market-widget" id="mw-usdinr">
-        <div class="mw-label">USD / INR</div>
-        <div class="mw-value" id="mw-usdinr-val"><span class="mw-loading">Loading…</span></div>
-        <div class="mw-sub" id="mw-usdinr-sub">Live rate</div>
-      </div>
-      <div class="market-widget mw-link" onclick="window.open('https://www.balticexchange.com/en/data/indices/bdi.html','_blank')">
-        <div class="mw-label">Baltic Dry Index</div>
-        <div class="mw-value" id="mw-bdi-val"><span class="mw-loading">—</span></div>
-        <div class="mw-sub">Click for live chart ↗</div>
-      </div>
-      <div class="market-widget mw-link" onclick="window.open('https://fbx.freightos.com/','_blank')">
-        <div class="mw-label">Freightos FBX</div>
-        <div class="mw-value" id="mw-fbx-val"><span class="mw-loading">—</span></div>
-        <div class="mw-sub">Container index ↗</div>
-      </div>
-      <div class="market-widget mw-link" onclick="window.open('https://www.indexmundi.com/commodities/?commodity=sawnwood&months=60','_blank')">
-        <div class="mw-label">Sawnwood Price</div>
-        <div class="mw-value">Index</div>
-        <div class="mw-sub">World Bank · Click ↗</div>
-      </div>
-      <div class="market-widget mw-upgrade" id="mw-upgrade-banner" style="display:none" onclick="nav('settings')">
-        <div class="mw-upgrade-badge">FREE PLAN</div>
-        <div class="mw-upgrade-headline">Unlock the full picture</div>
-        <div class="mw-upgrade-body">Multi-user access, advanced P&amp;L reports, priority support and more.</div>
-        <div class="mw-upgrade-cta">Upgrade to Growth ↗</div>
-      </div>
-    </div>
-
     <!-- Payment Alerts -->
     <div id="payment-alerts-banner"></div>
 
@@ -281,61 +240,4 @@ function showDashDetail(type) {
 
   panel.innerHTML = html;
   panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-
-/* ── Dashboard: welcome bar + market widgets ── */
-function _dashGreeting() {
-  const h = new Date().getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 17) return 'Good afternoon';
-  return 'Good evening';
-}
-
-function _dashDate() {
-  return new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-}
-
-async function _fetchMarketWidgets() {
-  // Set greeting + date
-  const gr = document.getElementById('welcome-greeting');
-  const dt = document.getElementById('welcome-date');
-  const firstName = (S.userRecord?.name || S.user?.email || '').split(' ')[0].split('@')[0];
-  if (gr) gr.textContent = _dashGreeting() + (firstName ? ', ' + firstName : '');
-  if (dt) dt.textContent = _dashDate();
-
-  // Show upgrade banner for starter (free) plan
-  const banner = document.getElementById('mw-upgrade-banner');
-  if (banner) {
-    const plan = S.company?.plan || 'starter';
-    banner.style.display = (plan === 'starter' || plan === 'free') ? '' : 'none';
-  }
-
-  // USD/INR — open.er-api.com (no key needed, CORS-open)
-  const el  = document.getElementById('mw-usdinr-val');
-  const sub = document.getElementById('mw-usdinr-sub');
-  try {
-    const r = await fetch('https://open.er-api.com/v6/latest/USD');
-    if (!r.ok) throw new Error(r.status);
-    const d = await r.json();
-    const rate = d?.rates?.INR;
-    if (el && rate) {
-      el.textContent = '₹ ' + rate.toFixed(2);
-      if (sub) sub.textContent = 'Updated ' + (d.time_last_update_utc || '').slice(0,16);
-    }
-  } catch(e) {
-    // Fallback: try exchangerate-api free tier
-    try {
-      const r2 = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-      const d2 = await r2.json();
-      const rate2 = d2?.rates?.INR;
-      if (el && rate2) {
-        el.textContent = '₹ ' + rate2.toFixed(2);
-        if (sub) sub.textContent = 'Live rate';
-      }
-    } catch(e2) {
-      if (el) el.innerHTML = '<span style="font-size:13px;color:var(--text2)">See XE.com</span>';
-      if (sub) sub.innerHTML = '<a href="https://www.xe.com/currencyconverter/convert/?Amount=1&From=USD&To=INR" target="_blank" style="color:var(--teal-mid)">Open XE ↗</a>';
-    }
-  }
 }
