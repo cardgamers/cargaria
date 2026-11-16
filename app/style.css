@@ -953,29 +953,47 @@ tbody tr.clickable:hover {
 
 /* ── Print Styles ── */
 @media print {
-  /* Hide the full app shell; show only the modal */
+  /* Hide everything except the modal */
   #app-shell, #auth-screen, #onboarding-screen { display: none !important; }
-  body { background: #fff !important; color: #000 !important; margin: 0; }
+  body { background: #fff !important; color: #000 !important; margin: 0; padding: 0; }
 
-  /* Modal becomes the page */
+  /* Flatten modal into a normal block — no overlay, no scrollbox */
   #modal-root {
     display: block !important;
     position: static !important;
     background: none !important;
     padding: 0 !important;
     overflow: visible !important;
+    inset: auto !important;
+    z-index: auto !important;
   }
   .modal {
     box-shadow: none !important;
     border-radius: 0 !important;
     max-width: 100% !important;
+    width: 100% !important;
     margin: 0 !important;
     overflow: visible !important;
   }
+  /* KEY: remove the scrollable body constraint */
+  .modal-body {
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 16px !important;
+  }
+  .modal-header {
+    background: #fff !important;
+    border-bottom: 1px solid #ccc !important;
+  }
+  .modal-footer {
+    background: #fff !important;
+    border-top: 1px solid #ccc !important;
+  }
 
-  .no-print, .btn { display: none !important; }
-  .card { box-shadow: none !important; border: 1px solid #ccc !important; }
-  table { font-size: 11px; }
+  .no-print, .btn, .close-btn { display: none !important; }
+  .card { box-shadow: none !important; border: 1px solid #ddd !important; }
+  table { font-size: 11px; width: 100%; }
+  .kpi-grid { grid-template-columns: repeat(4, 1fr) !important; }
 }
 
 .print-header {

@@ -323,60 +323,6 @@ function getPaymentAlerts() {
   return alerts.sort((a, b) => a.diff - b.diff);
 }
 
-function renderPaymentAlerts(containerId) {
-  const el = document.getElementById(containerId);
-  if (!el) return;
-  const alerts = getPaymentAlerts();
-  if (!alerts.length) { el.style.display = 'none'; return; }
-  el.style.display = 'block';
-  const overdue  = alerts.filter(a => a.urgency === 'overdue');
-  const upcoming = alerts.filter(a => a.urgency !== 'overdue');
-  const totalAmt = alerts.reduce((s, a) => s + a.amount, 0);
-  const bannerId = containerId + '-banner';
-  const listId   = containerId + '-list';
-  const parts = [];
-  if (overdue.length)  parts.push('<span style="color:var(--red)">' + overdue.length + ' overdue</span>');
-  if (upcoming.length) parts.push('<span style="color:#92400E">' + upcoming.length + ' upcoming</span>');
-  const summary = parts.join(' &nbsp;·&nbsp; ') + ' &nbsp;—&nbsp; <strong>' + fmt.usd(totalAmt) + '</strong>';
-  const rows = alerts.map(function(a) {
-    const bg     = a.urgency === 'overdue' ? '#FEF2F2' : '#FFFBEB';
-    const border = a.urgency === 'overdue' ? '#FECACA' : '#FCD34D';
-    const color  = a.urgency === 'overdue' ? 'var(--red)' : '#92400E';
-    const icon   = a.type === 'receivable' ? '\u{1F4E5}' : '\u{1F4E4}';
-    const ttype  = a.type === 'receivable' ? 'Receivable' : 'Payable';
-    return '<div onclick="contractDetail(\'' + a.contract.id + '\')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-radius:7px;background:' + bg + ';border:1px solid ' + border + '">'
-      + '<div style="display:flex;align-items:center;gap:10px">'
-      + '<span style="font-size:15px">' + icon + '</span>'
-      + '<div>'
-      + '<div style="font-size:13px;font-weight:600;color:' + color + '">' + a.label + '</div>'
-      + '<div style="font-size:11px;color:var(--text2)">Due: ' + a.date + ' · ' + ttype + '</div>'
-      + '</div></div>'
-      + '<div style="font-size:13px;font-weight:700;color:' + color + '">' + fmt.usd(a.amount) + '</div>'
-      + '</div>';
-  }).join('');
-  el.innerHTML = '<div id="' + bannerId + '" style="margin-bottom:12px">'
-    + '<div onclick="togglePaymentAlerts(\'' + listId + '\',\'' + bannerId + '\')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:8px;background:#FEF2F2;border:1px solid #FECACA;user-select:none">'
-    + '<div style="display:flex;align-items:center;gap:8px;font-size:13px">'
-    + '<span>⚠️</span>'
-    + '<span style="font-weight:600;color:var(--red)">Payment Alerts</span>'
-    + '<span style="color:var(--text2)">' + summary + '</span>'
-    + '</div>'
-    + '<span id="' + bannerId + '-chevron" style="font-size:11px;color:var(--text2)">▾</span>'
-    + '</div>'
-    + '<div id="' + listId + '" style="display:none;flex-direction:column;gap:5px;margin-top:6px">' + rows + '</div>'
-    + '</div>';
-  document.getElementById(listId).style.display = 'none';
-}
-
-function togglePaymentAlerts(listId, bannerId) {
-  const list    = document.getElementById(listId);
-  const chevron = document.getElementById(bannerId + '-chevron');
-  if (!list) return;
-  const isOpen = list.style.display !== 'none';
-  list.style.display = isOpen ? 'none' : 'flex';
-  if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
-}
-
 /* ── App Initialisation ── */
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
