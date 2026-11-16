@@ -51,7 +51,7 @@ const fmt = {
     if (n === null || n === undefined || n === '') return '—';
     const v = parseFloat(n);
     if (isNaN(v)) return '—';
-    return v.toFixed(1) + '%';
+    return (v * 100).toFixed(1) + '%';
   },
   reldate(d) {
     if (!d) return '—';
