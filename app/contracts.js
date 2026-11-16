@@ -146,7 +146,7 @@ async function contractDetail(id) {
       </div>
       <div style="display:flex;gap:8px;align-items:center">
         ${canEdit ? `<button class="btn btn-sm" onclick="editContractModal('${id}')">✏️ Edit</button>` : ''}
-        <button class="btn btn-sm no-print" onclick="printContract('${c.contract_number}','${c.product}')">🖨 Print</button>
+        <button class="btn btn-sm no-print" onclick="printContract('${c.id}')">🖨 Print</button>
         <button class="close-btn" onclick="closeModal()">✕</button>
       </div>
     </div>
@@ -1277,19 +1277,140 @@ async function saveEditContract(id) {
 }
 
 /* ── Print Functions ── */
-function printContract(contractNumber, product) {
-  const headerEl = document.getElementById('contract-print-header');
-  if (headerEl) headerEl.innerHTML = getPrintHeader('Contract ' + contractNumber + ' — ' + product);
-  const modalBody = document.querySelector('.modal-body');
-  if (modalBody) modalBody.scrollTop = 0;
-  const modalRoot = document.getElementById('modal-root');
-  if (modalRoot) modalRoot.scrollTop = 0;
-  const orig = document.title;
-  document.title = contractNumber + ' — ' + product;
-  setTimeout(() => {
-    window.print();
-    document.title = orig;
-  }, 100);
+function printContract(contractId) {
+  // Find the contract from either the passed id or contract number
+  const c = S.contracts.find(x => x.id === contractId) || S.contracts.find(x => x.contract_number === contractId);
+  if (!c) return;
+
+  const co = S.company || {};
+  const logoHtml = co.logo_url
+    ? `<img src="${co.logo_url}" style="height:40px;object-fit:contain">`
+    : `<div style="width:40px;height:40px;border-radius:8px;background:#0B4F6C;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff">${(co.name||'C').substring(0,1)}</div>`;
+
+  const advancePaid     = (+c.advance_paid||0);
+  const advanceReceived = (+c.advance_received||0);
+  const purchaseBalance = (+c.purchase_value||0) - advancePaid;
+  const salesBalance    = (+c.sales_value||0) - advanceReceived;
+  const totalCosts      = (+c.purchase_value||0)+(+c.freight||0)+(+c.insurance||0)+(+c.documentation_charges||0)+(+c.payment_charges||0)+(+c.demurrage||0)+(+c.commission_value||0)+(+c.other_costs||0);
+  const netMargin       = (+c.sales_value||0) - totalCosts;
+  const netMarginPct    = (+c.sales_value||0) > 0 ? (netMargin / (+c.sales_value||1) * 100) : 0;
+
+  const usd = v => v == null || v === '' ? '—' : '$' + Number(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const dt  = v => { if (!v) return '—'; const d = new Date(v); return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); };
+  const row = (l,v) => `<tr><td style="color:#64748b;padding:5px 0;font-size:12px;width:48%">${l}</td><td style="font-size:12px;font-weight:500;text-align:right">${v}</td></tr>`;
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head>
+  <title>${c.contract_number} — ${c.product||''}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Arial,sans-serif;color:#1e293b;background:#fff;padding:20px}
+    .header{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:2px solid #0B4F6C;margin-bottom:16px}
+    .co-name{font-size:16px;font-weight:700;color:#0B4F6C}
+    .co-addr{font-size:11px;color:#64748b}
+    .doc-title{font-size:15px;font-weight:700;text-align:right}
+    .doc-sub{font-size:11px;color:#64748b;text-align:right}
+    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+    .kpi{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:10px 12px}
+    .kpi.navy{border-left:3px solid #0B4F6C}
+    .kpi.teal{border-left:3px solid #0E6D94}
+    .kpi.green{border-left:3px solid #059669}
+    .kpi.amber{border-left:3px solid #d97706}
+    .kpi-label{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.5px}
+    .kpi-value{font-size:16px;font-weight:700;margin:2px 0}
+    .kpi-sub{font-size:10px;color:#94a3b8}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+    .card{border:1px solid #e2e8f0;border-radius:6px;padding:12px}
+    .card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#0B4F6C;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #e2e8f0}
+    table{width:100%;border-collapse:collapse}
+    .section{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#0B4F6C;padding:8px 0 4px;border-bottom:1px solid #0B4F6C;margin-bottom:8px}
+    .data-table td,.data-table th{padding:5px 8px;font-size:11px;border-bottom:1px solid #f1f5f9}
+    .data-table th{background:#f8fafc;font-weight:600;color:#475569}
+    .data-table td.num{text-align:right}
+    .footer{margin-top:16px;font-size:10px;color:#94a3b8;text-align:right}
+    @page{size:A4 portrait;margin:12mm 14mm}
+  </style></head><body>
+  <div class="header">
+    <div style="display:flex;align-items:center;gap:10px">
+      ${logoHtml}
+      <div>
+        <div class="co-name">${co.name||'Cargaria'}</div>
+        <div class="co-addr">${co.address||''}</div>
+      </div>
+    </div>
+    <div>
+      <div class="doc-title">Contract ${c.contract_number||''} — ${c.product||''}</div>
+      <div class="doc-sub">Status: ${(c.status||'').toUpperCase()} &nbsp;|&nbsp; Printed: ${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</div>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi navy"><div class="kpi-label">Purchase Value</div><div class="kpi-value">${usd(c.purchase_value)}</div><div class="kpi-sub">${c.purchase_payment_terms||'—'}</div></div>
+    <div class="kpi teal"><div class="kpi-label">Sales Value</div><div class="kpi-value">${usd(c.sales_value)}</div><div class="kpi-sub">${c.sales_payment_terms||'—'}</div></div>
+    <div class="kpi ${netMargin>=0?'green':'amber'}"><div class="kpi-label">Net Margin</div><div class="kpi-value">${usd(netMargin)}</div><div class="kpi-sub">${netMarginPct.toFixed(1)}%</div></div>
+    <div class="kpi amber"><div class="kpi-label">Capital at Risk</div><div class="kpi-value">${usd(advancePaid>advanceReceived?advancePaid-advanceReceived:0)}</div><div class="kpi-sub">Out − received back</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Purchase</div>
+      <table><tbody>
+        ${row('Supplier', c.supplier_name||'—')}
+        ${row('Country of Origin', c.country_of_origin||'—')}
+        ${row('Incoterm', c.purchase_incoterm||'—')}
+        ${row('Payment Terms', c.purchase_payment_terms||'—')}
+        ${row('Purchase Value', usd(c.purchase_value))}
+        ${row('Advance Paid', usd(c.advance_paid))}
+        ${row('Balance Payable', usd(purchaseBalance))}
+        ${row('Payable Due', dt(c.payable_due_date))}
+        ${row('BL Number', c.bl_number||'—')}
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-title">Sales</div>
+      <table><tbody>
+        ${row('Buyer', c.customer_name||'—')}
+        ${row('Payment Terms', c.sales_payment_terms||'—')}
+        ${row('Sales Value', usd(c.sales_value))}
+        ${row('Advance Received', usd(c.advance_received))}
+        ${row('Balance Receivable', usd(salesBalance))}
+        ${row('Receivable Due', dt(c.receivable_due_date))}
+        ${row('Invoice Number', c.sales_invoice_number||'—')}
+        ${row('Invoice Date', dt(c.sales_invoice_date))}
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-title">Shipping</div>
+      <table><tbody>
+        ${row('Vessel', c.vessel_name||'—')}
+        ${row('Shipping Line', c.shipping_line||'—')}
+        ${row('Load Port', c.load_port_display||'—')}
+        ${row('Discharge Port', c.discharge_port_display||'—')}
+        ${row('Sailing Date', dt(c.sailing_date))}
+        ${row('Arrival (ETA)', dt(c.arrival_date))}
+        ${row('Containers', c.container_count ? c.container_count + ' × 40HC' : '—')}
+        ${row('Free Days', c.free_days ? c.free_days + ' days' : '—')}
+        ${row('Container Return', dt(c.containers_returned_date))}
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-title">Costs</div>
+      <table><tbody>
+        ${row('Freight', usd(c.freight))}
+        ${row('Insurance', usd(c.insurance))}
+        ${row('Documentation', usd(c.documentation_charges))}
+        ${row('Payment Charges', usd(c.payment_charges))}
+        ${row('Commission', c.commission_pct ? c.commission_pct+'% = '+usd(c.commission_value) : usd(c.commission_value))}
+        ${row('Demurrage', usd(c.demurrage))}
+        ${row('Other Costs', usd(c.other_costs))}
+        <tr style="border-top:2px solid #0B4F6C"><td style="font-size:12px;font-weight:700;padding-top:6px">Total Costs</td><td style="font-size:12px;font-weight:700;text-align:right;padding-top:6px">${usd(totalCosts)}</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <div class="footer">Generated by Cargaria &nbsp;·&nbsp; ${new Date().toLocaleString()}</div>
+  <script>window.onload=()=>window.print();</scr`+`ipt></body></html>`);
+  win.document.close();
 }
 
 function printCostSheet(contractId) {
