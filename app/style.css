@@ -993,7 +993,7 @@ tbody tr.clickable:hover {
   .no-print, .btn, .close-btn { display: none !important; }
   .card { box-shadow: none !important; border: 1px solid #ddd !important; }
   table { font-size: 11px; width: 100%; }
-  .kpi-grid { grid-template-columns: repeat(4, 1fr) !important; }
+  .kpi-grid { grid-template-columns: repeat(5, 1fr) !important; }
 }
 
 .print-header {

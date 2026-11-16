@@ -1,7 +1,7 @@
 {
-  "name": "Cargaria — Timber Trade Manager",
+  "name": "Cargaria — Commodity Trade Manager",
   "short_name": "Cargaria",
-  "description": "Timber import/export contract and trade management",
+  "description": "Commodity import/export contract and trade management",
   "start_url": "/app/",
   "scope": "/",
   "display": "standalone",
