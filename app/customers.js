@@ -118,7 +118,6 @@ async function saveCustomer(id) {
     contact_person:       document.getElementById('cust-contact').value.trim() || null,
     email:                document.getElementById('cust-email').value.trim() || null,
     phone:                document.getElementById('cust-phone').value.trim() || null,
-    address:              document.getElementById('cust-addr').value.trim() || null,
     notes:                document.getElementById('cust-notes').value.trim() || null,
   };
 

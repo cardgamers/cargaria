@@ -118,7 +118,6 @@ async function saveSupplier(id) {
     contact_person:       document.getElementById('sup-contact').value.trim() || null,
     email:                document.getElementById('sup-email').value.trim() || null,
     phone:                document.getElementById('sup-phone').value.trim() || null,
-    address:              document.getElementById('sup-addr').value.trim() || null,
     notes:                document.getElementById('sup-notes').value.trim() || null,
   };
 
