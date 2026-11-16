@@ -3,7 +3,7 @@
    ═══════════════════════════════════════════════════════ */
 
 function dashboard() {
-  document.getElementById('page-title').textContent = 'Dashboard';
+  document.getElementById('page-title').textContent = '';
   document.getElementById('topbar-actions').innerHTML = '';
 
   // Fetch market widgets async (non-blocking)
@@ -294,22 +294,35 @@ async function _fetchMarketWidgets() {
   // Set greeting + date
   const gr = document.getElementById('welcome-greeting');
   const dt = document.getElementById('welcome-date');
-  if (gr) gr.textContent = _dashGreeting() + (S.userRecord?.name ? ', ' + S.userRecord.name.split(' ')[0] : '');
+  const firstName = (S.userRecord?.name || S.user?.email || '').split(' ')[0].split('@')[0];
+  if (gr) gr.textContent = _dashGreeting() + (firstName ? ', ' + firstName : '');
   if (dt) dt.textContent = _dashDate();
 
-  // USD/INR — free public API
+  // USD/INR — open.er-api.com (no key needed, CORS-open)
+  const el  = document.getElementById('mw-usdinr-val');
+  const sub = document.getElementById('mw-usdinr-sub');
   try {
-    const r = await fetch('https://api.frankfurter.app/latest?from=USD&to=INR');
+    const r = await fetch('https://open.er-api.com/v6/latest/USD');
+    if (!r.ok) throw new Error(r.status);
     const d = await r.json();
     const rate = d?.rates?.INR;
-    const el = document.getElementById('mw-usdinr-val');
-    const sub = document.getElementById('mw-usdinr-sub');
     if (el && rate) {
-      el.textContent = '₹ ' + rate.toFixed(2);
-      if (sub) sub.textContent = 'As of today';
+      el.textContent = '₹ ' + rate.toFixed(2);
+      if (sub) sub.textContent = 'Updated ' + (d.time_last_update_utc || '').slice(0,16);
     }
   } catch(e) {
-    const el = document.getElementById('mw-usdinr-val');
-    if (el) el.innerHTML = '<span class="mw-loading">Unavailable</span>';
+    // Fallback: try exchangerate-api free tier
+    try {
+      const r2 = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+      const d2 = await r2.json();
+      const rate2 = d2?.rates?.INR;
+      if (el && rate2) {
+        el.textContent = '₹ ' + rate2.toFixed(2);
+        if (sub) sub.textContent = 'Live rate';
+      }
+    } catch(e2) {
+      if (el) el.innerHTML = '<span style="font-size:13px;color:var(--text2)">See XE.com</span>';
+      if (sub) sub.innerHTML = '<a href="https://www.xe.com/currencyconverter/convert/?Amount=1&From=USD&To=INR" target="_blank" style="color:var(--teal-mid)">Open XE ↗</a>';
+    }
   }
 }
