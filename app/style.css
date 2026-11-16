@@ -953,13 +953,28 @@ tbody tr.clickable:hover {
 
 /* ── Print Styles ── */
 @media print {
-  #sidebar, #topbar, #modal-root, .no-print { display: none !important; }
-  #app { display: block !important; overflow: visible !important; }
-  #main { overflow: visible !important; }
-  #content { overflow: visible !important; padding: 0; }
+  /* Hide the full app shell; show only the modal */
+  #app-shell, #auth-screen, #onboarding-screen { display: none !important; }
+  body { background: #fff !important; color: #000 !important; margin: 0; }
+
+  /* Modal becomes the page */
+  #modal-root {
+    display: block !important;
+    position: static !important;
+    background: none !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  .modal {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .no-print, .btn { display: none !important; }
   .card { box-shadow: none !important; border: 1px solid #ccc !important; }
-  .btn { display: none !important; }
-  body { background: #fff; color: #000; }
   table { font-size: 11px; }
 }
 
@@ -968,7 +983,7 @@ tbody tr.clickable:hover {
 }
 
 @media print {
-  .print-header { display: block; margin-bottom: 20px; }
+  .print-header { display: block !important; margin-bottom: 20px; }
   .print-header h2 { font-size: 18px; color: #000; }
   .print-header p { font-size: 11px; color: #555; }
 }
