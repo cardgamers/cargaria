@@ -62,6 +62,12 @@ function dashboard() {
         <div class="mw-value">Index</div>
         <div class="mw-sub">World Bank · Click ↗</div>
       </div>
+      <div class="market-widget mw-upgrade" id="mw-upgrade-banner" style="display:none" onclick="nav('settings')">
+        <div class="mw-upgrade-badge">FREE PLAN</div>
+        <div class="mw-upgrade-headline">Unlock the full picture</div>
+        <div class="mw-upgrade-body">Multi-user access, advanced P&amp;L reports, priority support and more.</div>
+        <div class="mw-upgrade-cta">Upgrade to Growth ↗</div>
+      </div>
     </div>
 
     <!-- Payment Alerts -->
@@ -297,6 +303,13 @@ async function _fetchMarketWidgets() {
   const firstName = (S.userRecord?.name || S.user?.email || '').split(' ')[0].split('@')[0];
   if (gr) gr.textContent = _dashGreeting() + (firstName ? ', ' + firstName : '');
   if (dt) dt.textContent = _dashDate();
+
+  // Show upgrade banner for starter (free) plan
+  const banner = document.getElementById('mw-upgrade-banner');
+  if (banner) {
+    const plan = S.company?.plan || 'starter';
+    banner.style.display = (plan === 'starter' || plan === 'free') ? '' : 'none';
+  }
 
   // USD/INR — open.er-api.com (no key needed, CORS-open)
   const el  = document.getElementById('mw-usdinr-val');

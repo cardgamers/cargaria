@@ -975,12 +975,9 @@ tbody tr.clickable:hover {
 /* ── Market Widgets ── */
 .market-widgets {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 12px;
   margin-bottom: 20px;
-}
-@media (max-width: 900px) {
-  .market-widgets { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 500px) {
   .market-widgets { grid-template-columns: 1fr; }
@@ -1028,6 +1025,47 @@ tbody tr.clickable:hover {
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: .4; }
+}
+
+/* ── Upgrade Banner Widget ── */
+.market-widget.mw-upgrade {
+  background: linear-gradient(135deg, var(--navy) 0%, #0E6D94 100%);
+  border-color: transparent;
+  cursor: pointer;
+  transition: opacity .15s, transform .15s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.market-widget.mw-upgrade:hover {
+  opacity: .92;
+  transform: translateY(-1px);
+}
+.mw-upgrade-badge {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.65);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.mw-upgrade-headline {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+.mw-upgrade-body {
+  font-size: 11px;
+  color: rgba(255,255,255,.75);
+  line-height: 1.4;
+  flex: 1;
+}
+.mw-upgrade-cta {
+  font-size: 12px;
+  font-weight: 700;
+  color: #FFD580;
+  margin-top: 6px;
 }
 
 @media print {
