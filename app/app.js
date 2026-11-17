@@ -305,24 +305,24 @@ function getPaymentAlerts() {
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const alerts = [];
   for (const c of (S.contracts || [])) {
-    if (c.payable_due_date) {
+    if (c.payable_due_date && (+c.purchase_balance_payable || 0) > 0) {
       const d = new Date(c.payable_due_date); d.setHours(0, 0, 0, 0);
       const diff = Math.floor((d - today) / (1000 * 60 * 60 * 24));
       if (diff < 8) alerts.push({
         type: 'payable', urgency: diff < 0 ? 'overdue' : 'soon',
         contract: c, diff,
         label: (diff < 0 ? 'Overdue: Pay ' : `Due in ${diff}d: Pay `) + (c.supplier_name || 'Supplier') + ' — ' + (c.contract_number || ''),
-        amount: c.purchase_value, date: c.payable_due_date,
+        amount: c.purchase_balance_payable, date: c.payable_due_date,
       });
     }
-    if (c.receivable_due_date) {
+    if (c.receivable_due_date && (+c.sales_balance_receivable || 0) > 0) {
       const d = new Date(c.receivable_due_date); d.setHours(0, 0, 0, 0);
       const diff = Math.floor((d - today) / (1000 * 60 * 60 * 24));
       if (diff < 8) alerts.push({
         type: 'receivable', urgency: diff < 0 ? 'overdue' : 'soon',
         contract: c, diff,
         label: (diff < 0 ? 'Overdue: Collect from ' : `Due in ${diff}d: Collect from `) + (c.customer_name || 'Buyer') + ' — ' + (c.contract_number || ''),
-        amount: c.sales_value, date: c.receivable_due_date,
+        amount: c.sales_balance_receivable, date: c.receivable_due_date,
       });
     }
   }
