@@ -172,7 +172,7 @@ async function loadAllData() {
 }
 
 async function refreshContracts() {
-  cconst { data } = await sb.from('contract_summary')
+  const { data } = await sb.from('contract_summary')
     .select('*')
     .eq('company_id', S.companyId)
     .order('created_at', { ascending: false });
