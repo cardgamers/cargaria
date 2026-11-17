@@ -157,7 +157,7 @@ async function loadAllData() {
     sb.from('suppliers').select('*, countries(name)').eq('company_id', S.companyId).eq('is_active', true).order('name'),
     sb.from('customers').select('*, countries(name)').eq('company_id', S.companyId).eq('is_active', true).order('name'),
     sb.from('payments').select('*').eq('company_id', S.companyId).order('payment_date', { ascending: false }),
-    sb.from('ports').select('*, port_groups(name)').eq('is_active', true).order('display_name'),
+    sb.from('ports').select('*, port_groups(name)').order('display_name'),
     sb.from('port_groups').select('*').order('name'),
     sb.from('countries').select('*').order('name'),
   ]);
