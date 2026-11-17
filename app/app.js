@@ -305,7 +305,7 @@ function getPaymentAlerts() {
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const alerts = [];
   for (const c of (S.contracts || [])) {
-    if (c.payable_due_date && (+c.purchase_balance_payable || 0) > 0) {
+    if (c.payable_due_date && (+c.purchase_balance_payable || 0) > 1) {
       const d = new Date(c.payable_due_date); d.setHours(0, 0, 0, 0);
       const diff = Math.floor((d - today) / (1000 * 60 * 60 * 24));
       if (diff < 8) alerts.push({
@@ -315,7 +315,7 @@ function getPaymentAlerts() {
         amount: c.purchase_balance_payable, date: c.payable_due_date,
       });
     }
-    if (c.receivable_due_date && (+c.sales_balance_receivable || 0) > 0) {
+    if (c.receivable_due_date && (+c.sales_balance_receivable || 0) > 1) {
       const d = new Date(c.receivable_due_date); d.setHours(0, 0, 0, 0);
       const diff = Math.floor((d - today) / (1000 * 60 * 60 * 24));
       if (diff < 8) alerts.push({
