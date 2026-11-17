@@ -92,9 +92,9 @@ async function contractDetail(id) {
     { data: contractFull },
   ] = await Promise.all([
     sb.from('shipment_lines').select('*').eq('contract_id', id).order('created_at'),
-    sb.from('payments').select('*').eq('contract_id', id).order('payment_date'),
+    sb.from('payments').select('*').eq('contract_id', id).eq('company_id', S.companyId).order('payment_date'),
     sb.from('quality_claims').select('*').eq('contract_id', id).order('created_at'),
-    sb.from('contracts').select('*').eq('id', id).single(),
+    sb.from('contracts').select('*').eq('id', id).eq('company_id', S.companyId).single(),
   ]);
 
   // Cache for invoice print
@@ -726,7 +726,7 @@ function toggleDocCheck(contractId, docName, checked) {
 
 /* ── Shipment Line Modals ── */
 async function editShipmentLineModal(lineId, contractId) {
-  const { data: line } = await sb.from('shipment_lines').select('*').eq('id', lineId).single();
+  const { data: line } = await sb.from('shipment_lines').select('*').eq('id', lineId).eq('contract_id', contractId).single();
   if (!line) return;
 
   openModal(`
@@ -1101,7 +1101,7 @@ async function saveNewContract() {
 
 /* ── Edit Contract Modal ── */
 async function editContractModal(id) {
-  const { data: c } = await sb.from('contracts').select('*').eq('id', id).single();
+  const { data: c } = await sb.from('contracts').select('*').eq('id', id).eq('company_id', S.companyId).single();
   if (!c) return;
 
   const supplierOptions = S.suppliers.map(s => `<option value="${s.id}" ${s.id===c.supplier_id?'selected':''}>${s.name}</option>`).join('');

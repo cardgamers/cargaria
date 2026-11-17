@@ -79,7 +79,7 @@ function addSupplierModal() {
 }
 
 async function editSupplierModal(id) {
-  const { data: s } = await sb.from('suppliers').select('*').eq('id', id).single();
+  const { data: s } = await sb.from('suppliers').select('*').eq('id', id).eq('company_id', S.companyId).single();
   if (!s) return;
   const v = x => x !== null && x !== undefined ? x : '';
   openModal(`

@@ -79,7 +79,7 @@ function addCustomerModal() {
 }
 
 async function editCustomerModal(id) {
-  const { data: c } = await sb.from('customers').select('*').eq('id', id).single();
+  const { data: c } = await sb.from('customers').select('*').eq('id', id).eq('company_id', S.companyId).single();
   if (!c) return;
   const v = x => x !== null && x !== undefined ? x : '';
   openModal(`
